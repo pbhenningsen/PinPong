@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bafoh1ief0147"]
+[gd_scene load_steps=6 format=3 uid="uid://bafoh1ief0147"]
 
 [ext_resource type="Script" uid="uid://b77yj8ux8kbs3" path="res://logic/pong.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://b10swafhe08oj" path="res://separator.png" id="2"]
 [ext_resource type="PackedScene" uid="uid://cpw46256eirwq" path="res://paddle.tscn" id="3"]
 [ext_resource type="PackedScene" uid="uid://bjmldn1x3lpa" path="res://ball.tscn" id="4"]
+[ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="4_eipaa"]
 
 [node name="Pong" type="Node2D"]
 script = ExtResource("1")
@@ -20,34 +21,20 @@ position = Vector2(320, 200)
 texture = ExtResource("2")
 
 [node name="Player1" parent="." instance=ExtResource("3")]
-modulate = Color(0, 1, 1, 1)
 position = Vector2(32.49, 188.622)
 left = true
 
+[node name="You" parent="Player1" index="2"]
+theme = ExtResource("4_eipaa")
+
 [node name="Player2" parent="." instance=ExtResource("3")]
-modulate = Color(1, 0, 1, 1)
 position = Vector2(608.88, 188.622)
+
+[node name="You" parent="Player2" index="2"]
+theme = ExtResource("4_eipaa")
 
 [node name="Ball" parent="." instance=ExtResource("4")]
 position = Vector2(320.387, 189.525)
-
-[node name="ScoreLeft" type="Label" parent="."]
-offset_left = 240.0
-offset_top = 10.0
-offset_right = 280.0
-offset_bottom = 30.0
-size_flags_horizontal = 2
-size_flags_vertical = 0
-text = "0"
-
-[node name="ScoreRight" type="Label" parent="."]
-offset_left = 360.0
-offset_top = 10.0
-offset_right = 400.0
-offset_bottom = 30.0
-size_flags_horizontal = 2
-size_flags_vertical = 0
-text = "0"
 
 [node name="WinnerLeft" type="Label" parent="."]
 visible = false
@@ -81,7 +68,40 @@ text = "Exit Game"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(320, 200)
-current = true
+
+[node name="Score" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="Score"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScoreLeft" type="Label" parent="Score/Control"]
+texture_filter = 1
+layout_mode = 1
+offset_left = 248.0
+offset_top = 8.0
+offset_right = 312.0
+offset_bottom = 28.0
+size_flags_horizontal = 2
+size_flags_vertical = 0
+theme = ExtResource("4_eipaa")
+text = "XXXX"
+
+[node name="ScoreRight" type="Label" parent="Score/Control"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 330.0
+offset_top = 8.0
+offset_right = 394.0
+offset_bottom = 28.0
+size_flags_horizontal = 2
+size_flags_vertical = 0
+theme = ExtResource("4_eipaa")
+text = "XXXX"
 
 [connection signal="pressed" from="ExitGame" to="." method="_on_exit_game_pressed"]
 
