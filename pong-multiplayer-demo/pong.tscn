@@ -14,7 +14,7 @@ offset_right = 640.0
 offset_bottom = 400.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.141176, 0.152941, 0.164706, 1)
+color = Color(0, 0, 0, 1)
 
 [node name="Separator" type="Sprite2D" parent="."]
 position = Vector2(320, 200)
