@@ -3,8 +3,11 @@
 [ext_resource type="FontFile" uid="uid://c15khjpn243is" path="res://PressStart2P-Regular.ttf" id="1_8il67"]
 
 [resource]
+Button/fonts/font = ExtResource("1_8il67")
 Label/font_sizes/font_size = 16
 Label/fonts/font = ExtResource("1_8il67")
+LineEdit/font_sizes/font_size = 16
+LineEdit/fonts/font = ExtResource("1_8il67")
 TextEdit/colors/background_color = Color(0.226707, 0.226707, 0.226707, 0)
 TextEdit/colors/caret_color = Color(0.875, 0.875, 0.875, 1)
 TextEdit/constants/caret_width = 1

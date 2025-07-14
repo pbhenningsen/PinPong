@@ -8,8 +8,10 @@ var score_left = 0
 var score_right = 0
 
 @onready var player2 = $Player2
-@onready var score_left_node = $ScoreLeft
-@onready var score_right_node = $ScoreRight
+@onready var score_left_label: Label = $Score/Control/ScoreLeft
+@onready var score_right_label: Label = $Score/Control/ScoreRight
+
+
 @onready var winner_left = $WinnerLeft
 @onready var winner_right = $WinnerRight
 
@@ -25,16 +27,20 @@ func _ready():
 		player2.set_multiplayer_authority(multiplayer.get_unique_id())
 
 	print("Unique id: ", multiplayer.get_unique_id())
+	score_left_label.text = "XXXX"
+	score_right_label.text = "XXXX"
 
 
 @rpc("any_peer", "call_local")
 func update_score(add_to_left):
 	if add_to_left:
 		score_left += 1
-		score_left_node.set_text(str(score_left))
+		score_left_label.set_text(str(score_left))
+
 	else:
 		score_right += 1
-		score_right_node.set_text(str(score_right))
+		score_right_label.set_text(str(score_right))
+
 
 	var game_ended = false
 	if score_left == SCORE_TO_WIN:

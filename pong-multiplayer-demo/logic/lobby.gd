@@ -12,11 +12,14 @@ const DEFAULT_PORT = 8910
 @onready var status_fail = $StatusFail
 @onready var port_forward_label = $PortForward
 @onready var find_public_ip_button = $FindPublicIP
+@onready var pin: LineEdit = $Pin
+
 
 var peer = null
 
 func _ready():
 	# Connect all the callbacks related to networking.
+
 	multiplayer.peer_connected.connect(_player_connected)
 	multiplayer.peer_disconnected.connect(_player_disconnected)
 	multiplayer.connected_to_server.connect(_connected_ok)
@@ -98,14 +101,15 @@ func _on_host_pressed():
 	multiplayer.set_multiplayer_peer(peer)
 	host_button.set_disabled(true)
 	join_button.set_disabled(true)
-	_set_status("Waiting for player...", true)
+	_set_status("Waiting for opponent...", true)
 
-	# Only show hosting instructions when relevant.
-	port_forward_label.visible = true
-	find_public_ip_button.visible = true
+	## Only show hosting instructions when relevant.# Note to self: YOU MAY WANT TO UNTOGGLE THESE COMMENTS
+	#port_forward_label.visible = true
+	#find_public_ip_button.visible = true
 
 
 func _on_join_pressed():
+	Globals.pin = pin.get_text()
 	var ip = address.get_text()
 	if not ip.is_valid_ip_address():
 		_set_status("IP address is invalid.", false)
