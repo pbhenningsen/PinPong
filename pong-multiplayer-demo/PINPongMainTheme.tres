@@ -5,3 +5,8 @@
 [resource]
 Label/font_sizes/font_size = 16
 Label/fonts/font = ExtResource("1_8il67")
+TextEdit/colors/background_color = Color(0.226707, 0.226707, 0.226707, 0)
+TextEdit/colors/caret_color = Color(0.875, 0.875, 0.875, 1)
+TextEdit/constants/caret_width = 1
+TextEdit/fonts/font = ExtResource("1_8il67")
+VBoxContainer/constants/separation = 10
