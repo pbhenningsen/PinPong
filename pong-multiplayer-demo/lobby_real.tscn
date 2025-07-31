@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://f85s2avde6r4"]
+[gd_scene load_steps=3 format=3 uid="uid://c5gh7s0vvir4t"]
 
-[ext_resource type="Script" uid="uid://cwe7mqy3660df" path="res://logic/lobby.gd" id="1"]
-[ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="1_xrgmn"]
+[ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="1_2awwq"]
+[ext_resource type="Script" uid="uid://cwe7mqy3660df" path="res://logic/lobby.gd" id="2_1eelo"]
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
@@ -18,7 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 2
 size_flags_vertical = 2
-theme = ExtResource("1_xrgmn")
+theme = ExtResource("1_2awwq")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
@@ -61,7 +61,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 2
 size_flags_vertical = 2
-script = ExtResource("1")
+script = ExtResource("2_1eelo")
 
 [node name="PinLabel" type="Label" parent="LobbyPanel"]
 layout_mode = 0
@@ -152,17 +152,16 @@ size_flags_vertical = 0
 horizontal_alignment = 1
 
 [node name="PortForward" type="Label" parent="LobbyPanel"]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -278.0
-offset_top = 91.0
-offset_right = 25.0
-offset_bottom = 166.0
+offset_left = -705.0
+offset_top = -7.0
+offset_right = -81.0
+offset_bottom = 68.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "If you want non-LAN clients to connect,
