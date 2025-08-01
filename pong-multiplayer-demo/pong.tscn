@@ -89,7 +89,6 @@ offset_bottom = 28.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
 theme = ExtResource("4_eipaa")
-text = "XXXX"
 
 [node name="ScoreRight" type="Label" parent="Score/Control"]
 texture_filter = 1
@@ -101,7 +100,6 @@ offset_bottom = 28.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
 theme = ExtResource("4_eipaa")
-text = "XXXX"
 
 [connection signal="pressed" from="ExitGame" to="." method="_on_exit_game_pressed"]
 
