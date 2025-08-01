@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://f85s2avde6r4"]
+[gd_scene load_steps=3 format=3 uid="uid://f85s2avde6r4"]
 
 [ext_resource type="Script" uid="uid://cwe7mqy3660df" path="res://logic/lobby.gd" id="1"]
 [ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="1_xrgmn"]
-[ext_resource type="Script" uid="uid://ck4ald6rq6s4m" path="res://matchmaking.gd" id="2_2wvic"]
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
@@ -20,9 +19,6 @@ grow_vertical = 2
 size_flags_horizontal = 2
 size_flags_vertical = 2
 theme = ExtResource("1_xrgmn")
-
-[node name="Node" type="Node" parent="."]
-script = ExtResource("2_2wvic")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
@@ -108,7 +104,6 @@ size_flags_vertical = 2
 text = "127.0.0.1"
 
 [node name="HostButton" type="Button" parent="LobbyPanel"]
-visible = false
 layout_mode = 0
 offset_left = 10.0
 offset_top = 170.0
