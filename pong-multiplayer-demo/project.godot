@@ -15,7 +15,7 @@ config/description="A multiplayer demo of the classic pong game.
 One of the players should press \"Host\", while the
 other should select the address and press \"Join\"."
 config/tags=PackedStringArray("2d", "demo", "network", "official")
-run/main_scene="res://lobby.tscn"
+run/main_scene="res://MainMenu.tscn"
 config/features=PackedStringArray("4.4")
 config/icon="res://icon.webp"
 
