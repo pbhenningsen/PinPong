@@ -1,127 +1,156 @@
 extends Control
 
-# Default game server port. Can be any number between 1024 and 49151.
-# Not present on the list of registered or common ports as of December 2022:
-# https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
-const DEFAULT_PORT = 8910# Remember, a port is a label for a process.
+##var playerScenePath = preload("res://scenes/character/player.tscn")
+var isHost = false
+##var mapSeed = randi()
+##var map: Node2D
+##var main: Node2D
 
-@onready var address = $Address
-@onready var host_button = $HostButton
-@onready var join_button = $JoinButton
-@onready var status_ok = $StatusOk
-@onready var status_fail = $StatusFail
-@onready var port_forward_label = $PortForward
-@onready var find_public_ip_button = $FindPublicIP
-@onready var pin: LineEdit = $Pin
+signal player_connected(peer_id)
+signal player_disconnected(peer_id)
+signal server_disconnected
+##signal player_spawned(peer_id, player_info)
+##signal player_despawned
+signal player_registered
+signal player_score_updated
+signal data_loaded
 
+const PORT = 31415
+const DEFAULT_SERVER_IP = Constants.SERVER_IP # I think this represents the server IPv4 from Digital Ocean?
 
-var peer = null
+var spawnedPlayers = {}
+var connectedPlayers = []
+var syncedPlayers = []
 
+var player_info = {"name": ""} # I think I can put the Pin here. 
+
+@onready var game = get_node("/root/Game")
 func _ready():
-	# Connect all the callbacks related to networking.
+	multiplayer.peer_connected.connect(_on_player_connected)
+	multiplayer.peer_disconnected.connect(_on_player_disconnected)
+	multiplayer.connected_to_server.connect(_on_connected_ok)
+	multiplayer.connection_failed.connect(_on_connected_fail)
+	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
-	multiplayer.peer_connected.connect(_player_connected) #Emitted when this MultiplayerAPI's multiplayer_peer connects with a new peer. 
-	multiplayer.peer_disconnected.connect(_player_disconnected)
-	multiplayer.connected_to_server.connect(_connected_ok)# Emitted when this Multiplayer API's multiplayer_peer successfully connected to a server. Only emitted on clients. 
-	multiplayer.connection_failed.connect(_connected_fail) # Only emitted on clients. 
-	multiplayer.server_disconnected.connect(_server_disconnected) # Only emitted on clients. 
-
-#### Network callbacks from SceneTree ####
-
-# Callback from SceneTree.
-func _player_connected(_id):
-	# Someone connected, start the game!
-	var pong = load("res://pong.tscn").instantiate()
-	# Connect deferred so we can safely erase it from the callback.
-	pong.game_finished.connect(_end_game, CONNECT_DEFERRED) #Deferred connections trigger their callables on idle time (at the end of the frame), rather than instantly. 
-
-	get_tree().get_root().add_child(pong)
-	hide()
-
-
-func _player_disconnected(_id):
-	if multiplayer.is_server():
-		_end_game("Client disconnected")
+func join_game(address = ""):
+	if address.is_empty():
+		address = DEFAULT_SERVER_IP
+	multiplayer.multiplayer_peer = null
+	var peer = WebSocketMultiplayerPeer.new()
+	var error
+	if Constants.USE_SSL:
+		var cert := load(Constants.TRUSTED_CHAIN_PATH)
+		var tlsOptions = TLSOptions.client(cert)
+		error = peer.create_client("wss://" + address + ":" + str(PORT), tlsOptions)
 	else:
-		_end_game("Server disconnected")
+		error = peer.create_client("ws://" + address + ":" + str(PORT))
+	if error:
+		return error
+	multiplayer.multiplayer_peer = peer
 
-
-# Callback from SceneTree, only for clients (not server).
-func _connected_ok():
-	pass # This function is not needed for this project.
-
-
-# Callback from SceneTree, only for clients (not server).
-func _connected_fail():
-	_set_status("Couldn't connect.", false)
-
-	multiplayer.set_multiplayer_peer(null) # Remove peer.
-	host_button.set_disabled(false)
-	join_button.set_disabled(false)
-
-
-func _server_disconnected():
-	_end_game("Server disconnected.")
-
-##### Game creation functions ######
-
-func _end_game(with_error = ""):
-	if has_node("/root/Pong"):
-		# Erase immediately, otherwise network might show
-		# errors (this is why we connected deferred above).
-		get_node(^"/root/Pong").free()
-		show()
-
-	multiplayer.set_multiplayer_peer(null) # Remove peer.
-	host_button.set_disabled(false)
-	join_button.set_disabled(false)
-
-	_set_status(with_error, false)
-
-
-func _set_status(text, isok):
-	# Simple way to show status.
-	if isok:
-		status_ok.set_text(text)
-		status_fail.set_text("")
+func create_game():
+	var peer = WebSocketMultiplayerPeer.new()
+	var error
+	if Constants.USE_SSL:
+		var priv := load(Constants.PRIVATE_KEY_PATH)
+		var cert := load(Constants.TRUSTED_CHAIN_PATH)
+		var tlsOptions = TLSOptions.server(priv, cert)
+		error = peer.create_server(PORT, "*", tlsOptions)
 	else:
-		status_ok.set_text("")
-		status_fail.set_text(text)
+		error = peer.create_server(PORT, "*")
+	if error:
+		return error
+	multiplayer.multiplayer_peer = peer
+	player_connected.emit(1, player_info)
+	game.start_game()
 
+func remove_multiplayer_peer():
+	multiplayer.multiplayer_peer = null
 
-func _on_host_pressed():
-	peer = ENetMultiplayerPeer.new()
-	var err = peer.create_server(DEFAULT_PORT, 1) # Maximum of 1 peer, since it's a 2-player game. Creates a server that listens to connections via port. 
-	if err != OK:
-		# Is another server running?
-		_set_status("Can't host, address in use.",false)
-		return
-	peer.get_host().compress(ENetConnection.COMPRESS_RANGE_CODER)# Compress Range Coder is good for small packets, but not things above 4 kb. 
+func _on_player_connected(id):
+	print("player connected with id "+str(id)+" to "+str(multiplayer.get_unique_id()))
 
-	multiplayer.set_multiplayer_peer(peer)
-	host_button.set_disabled(true)
-	join_button.set_disabled(true)
-	_set_status("Waiting for opponent...", true)
+@rpc("call_local" ,"any_peer", "reliable")
+func _register_character(new_player_info):
+	var new_player_id = multiplayer.get_remote_sender_id()
+	spawnedPlayers[new_player_id] = new_player_info
+	player_spawned.emit(new_player_id, new_player_info)
+	player_registered.emit()
+	
+@rpc("call_local" ,"any_peer", "reliable")
+func _deregister_character(id):
+	spawnedPlayers.erase(id)
+	player_despawned.emit()
 
-	## Only show hosting instructions when relevant.# Note to self: YOU MAY WANT TO UNTOGGLE THESE COMMENTS
-	#port_forward_label.visible = true
-	#find_public_ip_button.visible = true
+func _on_player_disconnected(id):
+	connectedPlayers.erase(id)
+	spawnedPlayers.erase(id)
+	syncedPlayers.erase(id)
+	player_disconnected.emit(id)
 
+func _on_connected_ok():
+	game.start_game()
+	var peer_id = multiplayer.get_unique_id()
+	connectedPlayers.append(peer_id)
+	player_connected.emit(peer_id)
+	load_main_game()
+	
+func load_main_game():
+	player_loaded.rpc_id(1)
 
-func _on_join_pressed():
-	Globals.pin = pin.get_text()
-	var ip = address.get_text()
-	if not ip.is_valid_ip_address():
-		_set_status("IP address is invalid.", false)
-		return
+@rpc("any_peer", "call_local", "reliable")
+func player_loaded():
+	var sender_id = multiplayer.get_remote_sender_id()
+	#print("remote sender:"+str(sender_id))
+	main = game.get_node("Level/Main")
+	var mapData := {
+		"seed": mapSeed,
+	}
+	sendGameData.rpc_id(sender_id, spawnedPlayers, mapData)
+	#print(connectedPlayers)
+	set_process(false)
 
-	peer = ENetMultiplayerPeer.new()
-	peer.create_client(ip, DEFAULT_PORT)
-	peer.get_host().compress(ENetConnection.COMPRESS_RANGE_CODER)
-	multiplayer.set_multiplayer_peer(peer)
+@rpc("authority", "call_remote", "reliable")
+func sendGameData(playerData, mapData):
+	spawnedPlayers = playerData
+	mapSeed = mapData["seed"]
+	main = game.get_node("Level/Main")
+	loadMap()
+	data_loaded.emit()
+	set_process(true)
 
-	_set_status("Connecting...", true)
+func _on_connected_fail():
+	multiplayer.multiplayer_peer = null
 
+func _on_server_disconnected():
+	multiplayer.multiplayer_peer = null
+	server_disconnected.emit()
 
-func _on_find_public_ip_pressed():
-	OS.shell_open("https://icanhazip.com/")
+func loadMap():
+	main = get_node("/root/Game/Level/Main")
+	map = main.get_node("Map")
+	map.generateMap()
+
+func requestSpawn(playerName, id, characterFile):
+	player_info["name"] = playerName
+	player_info["body"] = characterFile
+	player_info["score"] = 0
+	spawnedPlayers[id] = player_info
+	_register_character.rpc(player_info)
+	spawnPlayer.rpc_id(1, playerName, id, characterFile)
+
+@rpc("any_peer", "call_local", "reliable")
+func spawnPlayer(playerName, id, characterFile):
+	var newPlayer := playerScenePath.instantiate()
+	newPlayer.playerName = playerName
+	newPlayer.characterFile = characterFile
+	newPlayer.name = str(id)
+	main.get_node("Players").add_child(newPlayer)
+	newPlayer.sendPos.rpc(map.tile_map.map_to_local(map.walkable_tiles.pick_random()))
+
+@rpc("any_peer", "call_remote", "reliable")
+func showSpawnUI():
+	var spawnPlayerScene := preload("res://scenes/ui/spawn/spawnPlayer.tscn")
+	var retry = spawnPlayerScene.instantiate()
+	retry.retry = true
+	get_node("/root/Game/Level/Main/HUD").add_child(retry)

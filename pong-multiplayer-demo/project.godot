@@ -22,6 +22,11 @@ config/icon="res://icon.webp"
 [autoload]
 
 Globals="*res://globals.gd"
+BADMultiplayerManager="*res://addons/bad.multiplayer/autoloads/bad_multiplayer_manager.gd"
+BADNetworkManager="*res://addons/bad.multiplayer/autoloads/bad_network_manager.gd"
+BADNetworkEvents="*res://addons/bad.multiplayer/autoloads/bad_network_events.gd"
+BADSceneManager="*res://addons/bad.multiplayer/autoloads/bad_scene_manager.gd"
+BADMP="*res://addons/bad.multiplayer/autoloads/bad_mp.gd"
 
 [display]
 
@@ -31,6 +36,10 @@ window/size/window_width_override=1280
 window/size/window_height_override=800
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/bad.multiplayer/plugin.cfg")
 
 [input]
 
