@@ -1,9 +1,7 @@
 extends Control
 
-# Default game server port. Can be any number between 1024 and 49151.
-# Not present on the list of registered or common ports as of December 2022:
-# https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
-const DEFAULT_PORT = 8910
+
+const DEFAULT_PORT = 8080 #WebSocket Server Port
 
 @onready var address = $Address
 @onready var host_button = $HostButton
@@ -15,11 +13,15 @@ const DEFAULT_PORT = 8910
 @onready var pin: LineEdit = $Pin
 
 
-var peer = null
+#var peer = null
+var ws_client : WebSocketPeer
+var is_connected = false
 
 func _ready():
+	# Initialize WebSocket Client
+	ws_client = WebSocketPeer.new()
+	
 	# Connect all the callbacks related to networking.
-
 	multiplayer.peer_connected.connect(_player_connected)
 	multiplayer.peer_disconnected.connect(_player_disconnected)
 	multiplayer.connected_to_server.connect(_connected_ok)
