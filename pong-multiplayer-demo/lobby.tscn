@@ -53,9 +53,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -110.0
+offset_left = -240.0
 offset_top = -72.0
-offset_right = 110.0
+offset_right = 212.0
 offset_bottom = 164.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -65,63 +65,35 @@ script = ExtResource("1")
 
 [node name="PinLabel" type="Label" parent="LobbyPanel"]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 13.0
-offset_right = 186.0
-offset_bottom = 36.0
+offset_left = 11.0
+offset_top = 10.0
+offset_right = 449.0
+offset_bottom = 64.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
-text = "ATM PIN:"
+theme_override_font_sizes/font_size = 16
+text = "Please Enter Your ATM PIN:"
+autowrap_mode = 2
 
-[node name="Pin" type="LineEdit" parent="LobbyPanel"]
+[node name="PinEnter" type="LineEdit" parent="LobbyPanel"]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 48.0
-offset_right = 210.0
-offset_bottom = 79.0
+offset_left = 11.0
+offset_top = 36.0
+offset_right = 419.0
+offset_bottom = 67.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
 placeholder_text = "XXXX"
 
-[node name="IPAddressLabel" type="Label" parent="LobbyPanel"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 99.0
-offset_right = 186.0
-offset_bottom = 122.0
-size_flags_horizontal = 2
-size_flags_vertical = 0
-text = "IP Address:"
-
-[node name="Address" type="LineEdit" parent="LobbyPanel"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 132.0
-offset_right = 210.0
-offset_bottom = 163.0
-size_flags_horizontal = 2
-size_flags_vertical = 2
-text = "127.0.0.1"
-
-[node name="HostButton" type="Button" parent="LobbyPanel"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 170.0
-offset_right = 90.0
-offset_bottom = 201.0
-size_flags_horizontal = 2
-size_flags_vertical = 2
-text = "Host"
-
 [node name="JoinButton" type="Button" parent="LobbyPanel"]
 layout_mode = 0
-offset_left = 130.0
-offset_top = 170.0
-offset_right = 210.0
-offset_bottom = 201.0
+offset_left = 147.0
+offset_top = 142.0
+offset_right = 299.0
+offset_bottom = 173.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
-text = "Join"
+text = "Join Game"
 
 [node name="StatusOk" type="Label" parent="LobbyPanel"]
 layout_mode = 1
@@ -143,10 +115,10 @@ horizontal_alignment = 1
 [node name="StatusFail" type="Label" parent="LobbyPanel"]
 modulate = Color(1, 0.427451, 0.345098, 1)
 layout_mode = 0
-offset_left = 10.0
-offset_top = 194.0
-offset_right = 210.0
-offset_bottom = 217.0
+offset_left = 41.0
+offset_top = 183.0
+offset_right = 241.0
+offset_bottom = 206.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
 horizontal_alignment = 1
@@ -185,6 +157,5 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Find your public IP address"
 
-[connection signal="pressed" from="LobbyPanel/HostButton" to="LobbyPanel" method="_on_host_pressed"]
 [connection signal="pressed" from="LobbyPanel/JoinButton" to="LobbyPanel" method="_on_join_pressed"]
 [connection signal="pressed" from="LobbyPanel/FindPublicIP" to="LobbyPanel" method="_on_find_public_ip_pressed"]

@@ -5,15 +5,12 @@ extends Control
 # https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
 const DEFAULT_PORT = 8910
 
-@onready var address = $Address
-@onready var host_button = $HostButton
 @onready var join_button = $JoinButton
 @onready var status_ok = $StatusOk
 @onready var status_fail = $StatusFail
 @onready var port_forward_label = $PortForward
 @onready var find_public_ip_button = $FindPublicIP
-@onready var pin: LineEdit = $Pin
-
+@onready var pin_enter: LineEdit = $PinEnter
 
 var peer = null
 
@@ -109,7 +106,7 @@ func _on_host_pressed():
 
 
 func _on_join_pressed():
-	Globals.pin = pin.get_text()
+	Globals.player_pin = pin_enter.get_text()
 	var ip = address.get_text()
 	if not ip.is_valid_ip_address():
 		_set_status("IP address is invalid.", false)

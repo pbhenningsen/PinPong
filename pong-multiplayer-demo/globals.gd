@@ -1,3 +1,5 @@
 extends Node
 
-var pin;
+var player_pin
+var player1_score
+var player2_score
