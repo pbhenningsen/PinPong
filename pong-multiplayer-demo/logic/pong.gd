@@ -2,15 +2,17 @@ extends Node2D
 
 signal game_finished()
 
-const SCORE_TO_WIN = 10
+const SCORE_TO_WIN = 4
 
 var score_left = 0
 var score_right = 0
 
+var pin_left = "1234"
+var pin_right = "5678"
+
 @onready var player2 = $Player2
 @onready var score_left_label: Label = $Score/Control/ScoreLeft
 @onready var score_right_label: Label = $Score/Control/ScoreRight
-
 
 @onready var winner_left = $WinnerLeft
 @onready var winner_right = $WinnerRight
@@ -35,11 +37,36 @@ func _ready():
 func update_score(add_to_left):
 	if add_to_left:
 		score_left += 1
-		score_left_label.set_text(str(score_left))
+		#score_left_label.set_text(str(score_left))
 
 	else:
 		score_right += 1
-		score_right_label.set_text(str(score_right))
+		#score_right_label.set_text(str(score_right))
+		
+	match score_right:
+		0:
+			score_left_label.text = "XXXX"
+		1:
+			score_left_label.text = pin_left[0] + "XXX"
+		2: 
+			score_left_label.text = pin_left[0] + pin_left[1] + "XX"
+		3: 
+			score_left_label.text = pin_left[0] + pin_left[1] + pin_left[2] + "X"
+		4:
+			score_left_label.text = pin_left
+			
+	match score_left:
+		0:
+			score_right_label.text = "XXXX"
+		1:
+			score_right_label.text = pin_right[0] + "XXX"
+		2: 
+			score_right_label.text = pin_right[0] + pin_right[1] + "XX"
+		3: 
+			score_right_label.text = pin_right[0] + pin_right[1] + pin_right[2] + "X"
+		4:
+			score_right_label.text = pin_right
+		
 
 
 	var game_ended = false
