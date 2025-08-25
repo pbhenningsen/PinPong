@@ -22,7 +22,7 @@ var mock_user = {}
 const REQUEST_MATCHES = "REQUEST_MATCHES" #SERVER(LAMBDA): Retreives matches from DB, returns matches
 const JOIN_MATCH = "JOIN_MATCH" #SERVER(LAMBDA): Adds users to match using DB
 const MATCH_PLAYERS = "MATCH_PLAYERS" #This message is sent from the server, returns all players in match, triggers "load lobby with other players in match"
-const PLAYER_JOINED = "PLAYER_JOINED" #When ther server sends "Match Players" to the client, "PLAYER_JOINED" gets sent to all the other clients. 
+const PLAYER_JOINED = "PLAYER_JOINED" #When the server sends "Match Players" to the client, "PLAYER_JOINED" gets sent to all the other clients. 
 const PLAYER_DROPPED = "PLAYER_DROPPED"
 const CHECK_MATCH_READY = "CHECK_MATCH_READY" #SERVER(LAMBDA): Checks if match is full
 const MATCH_READY = "MATCH_READY" #SERVER(LAMBDA): Once the match is ready, it will send this back along with the IP address and Port # of the actual Godot server that's hosting the game. 
@@ -225,3 +225,11 @@ func _create_mock_matches():
 		"op": CREATE_MATCHES
 	}
 	_send_message(messageToSend)
+
+
+func _on_websocket_client_connection_closed() -> void:
+	pass # Replace with function body.
+
+
+func _on_websocket_client_message_received(message: Variant) -> void:
+	pass # Replace with function body.

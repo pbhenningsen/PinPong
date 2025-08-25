@@ -11,8 +11,6 @@ const lobby_room = "res://lobby_room.tscn"
 @onready var level_node: Node = $Level
 
 
-
-
 func _ready():
 	if OS.has_feature("dedicated_server"):
 		# if this is a dedicated server, run as a server

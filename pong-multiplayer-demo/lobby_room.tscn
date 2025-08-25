@@ -72,3 +72,7 @@ offset_right = 8.0
 offset_bottom = 8.0
 theme_override_font_sizes/font_size = 5
 text = "Create Matches"
+
+[connection signal="connected_to_server" from="WebSocketClient" to="." method="_on_websocket_client_connected_to_server"]
+[connection signal="connection_closed" from="WebSocketClient" to="." method="_on_websocket_client_connection_closed"]
+[connection signal="message_received" from="WebSocketClient" to="." method="_on_websocket_client_message_received"]

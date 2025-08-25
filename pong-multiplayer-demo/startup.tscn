@@ -9,7 +9,9 @@ script = ExtResource("1_c4aps")
 [node name="Level" type="Node" parent="."]
 
 [node name="LevelSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://bafoh1ief0147")
 spawn_path = NodePath("../Level")
+spawn_limit = 1
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3

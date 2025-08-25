@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Pong Multiplayer Demo"
+config/name="PinPong"
 config/description="A multiplayer demo of the classic pong game.
 One of the players should press \"Host\", while the
 other should select the address and press \"Join\"."
@@ -58,3 +58,4 @@ move_up={
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
