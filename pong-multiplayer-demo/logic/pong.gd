@@ -3,6 +3,7 @@ extends Node2D
 signal game_finished()
 
 const SCORE_TO_WIN = 4
+const LOCAL_HOST_MODE = false
 
 var score_left = 0
 var score_right = 0
@@ -18,21 +19,46 @@ var pin_right = "5678"
 @onready var winner_right = $WinnerRight
 
 func _ready():
+	print("level ready")
 	
-	# By default, all nodes in server inherit from master,
-	# while all nodes in clients inherit from puppet.
-	# set_multiplayer_authority is tree-recursive by default.
-	if multiplayer.is_server():  
-		# For the server, give control of player 2 to the other peer.
-		player2.set_multiplayer_authority(multiplayer.get_peers()[0])
-	else:
-		# For the client, give control of player 2 to itself.
-		player2.set_multiplayer_authority(multiplayer.get_unique_id())
+	if not multiplayer.is_server():
+		return 
+	
+	multiplayer.peer_connected.connect(add_player)
+	multiplayer.peer_disconnected.connect(del_player)
+	
+	for id in multiplayer.get_peers():
+		add_player(id)
 
-	print("Unique id: ", multiplayer.get_unique_id())
+	if LOCAL_HOST_MODE && not OS.has_feature("dedicated_server"):
+		add_player(1)
 	score_left_label.text = "XXXX"
 	score_right_label.text = "XXXX"
+	
+func add_player(id: int):
+	print("add player: " + str(id))
+	var character = preload("res://scenes/player.tscn").instantiate()
+	character.player = id
+	
+	var rng = RandomNumberGenerator.new()
+	var random_x = rng.randf_range(100.0, 150.0)
+	var random_z = rng.randf_range(100.0, 200.0)
+	character.position = Vector3(random_x, 10, random_z)
 
+	character.name = str(id)
+	$Players.add_child(character, true)
+
+
+func del_player(id: int):
+	if not $Players.has_node(str(id)):
+		return
+	$Players.get_node(str(id)).queue_free()
+	
+func _exit_tree():
+	if not multiplayer.is_server():
+		return
+	multiplayer.peer_connected.disconnect(add_player)
+	multiplayer.peer_disconnected.disconnect(del_player)
 
 @rpc("any_peer", "call_local")
 func update_score(add_to_left):
@@ -68,8 +94,6 @@ func update_score(add_to_left):
 		4:
 			score_right_label.text = pin_right
 		
-
-
 	var game_ended = false
 	if score_left == SCORE_TO_WIN:
 		winner_left.show()
