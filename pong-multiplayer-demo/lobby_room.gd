@@ -1,6 +1,6 @@
 extends Control
 
-var websocket_url = "wss://w7gitit5fh.execute-api.us-east-2.amazonaws.com/production/"
+var websocket_url = "wss://w0jm78oqx6.execute-api.us-east-2.amazonaws.com/production/"
 
 @onready var _client : WebSocketClient = $WebSocketClient
 @onready var matches_container: Panel = $MatchesContainer
@@ -117,7 +117,7 @@ func _join_match(match: Dictionary):
 	
 	var join_match_message = {
 		"op": JOIN_MATCH,
-		"matchId": match.matchId,
+		"matchId": match.matchId, ##DOES THIS HAVE SOMETHING TO DO WITH TEAM SIZE?
 		"playerId": mock_user.playerId,
 		"rank": mock_user.rank,
 		"username": mock_user.username

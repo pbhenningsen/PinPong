@@ -13,7 +13,7 @@ const lobby_room = "res://lobby_room.tscn"
 
 func _ready():
 	if OS.has_feature("dedicated_server"):
-		# if this is a dedicated server, run as a server
+		# if this is a dedicated server, run as a server (this will apply to the Linux export that lives on the server.)
 		_on_host_pressed()
 
 func _on_host_pressed():
