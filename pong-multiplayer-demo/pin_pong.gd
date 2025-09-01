@@ -108,6 +108,5 @@ func update_score(add_to_left):
 		$ExitGame.show()
 		$Ball.stop.rpc()
 
-
 func _on_exit_game_pressed():
 	game_finished.emit()

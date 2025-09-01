@@ -3,7 +3,7 @@ extends Node
 const SERVER_PORT = 8080
 const SERVER_IP = "127.0.0.1" # change this to your IP if you're using a remote server
 
-const gameplay_level = "res://pong_experiment.tscn"
+const gameplay_level = "res://pong.tscn"
 const lobby_room = "res://lobby_room.tscn"
 
 @onready var ui: Control = $UI
