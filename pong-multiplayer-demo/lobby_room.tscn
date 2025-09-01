@@ -47,9 +47,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -114.5
-offset_top = -114.0
+offset_top = -119.0
 offset_right = 114.5
-offset_bottom = 124.0
+offset_bottom = 119.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -62,17 +62,23 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MatchStatus" type="RichTextLabel" parent="MatchesContainer"]
-layout_mode = 0
-offset_right = 229.0
-offset_bottom = 40.0
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 10
 
 [node name="CreateMockMatches" type="Button" parent="."]
 layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+offset_right = 98.0
+offset_bottom = 30.0
 theme_override_font_sizes/font_size = 5
 text = "Create Matches"
 
 [connection signal="connected_to_server" from="WebSocketClient" to="." method="_on_websocket_client_connected_to_server"]
-[connection signal="connection_closed" from="WebSocketClient" to="." method="_on_websocket_client_connection_closed"]
-[connection signal="message_received" from="WebSocketClient" to="." method="_on_websocket_client_message_received"]
+[connection signal="connection_closed" from="WebSocketClient" to="." method="_on_websocket_client_connection_close"]
+[connection signal="message_received" from="WebSocketClient" to="." method="_on_websocket_message_received"]
+[connection signal="pressed" from="CreateMockMatches" to="." method="_create_mock_matches"]

@@ -9,6 +9,14 @@ var _you_hidden = false
 
 @onready var _screen_size_y = get_viewport_rect().size.y
 
+@export var player := 1:
+	set(id):
+		player = id
+		$PlayerInput.set_multiplayer_authority(id)
+		
+func _ready():
+	pass
+
 func _process(delta):
 	# Is the master of the paddle.
 	if is_multiplayer_authority():

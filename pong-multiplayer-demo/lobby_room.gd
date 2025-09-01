@@ -8,15 +8,7 @@ var websocket_url = "wss://w0jm78oqx6.execute-api.us-east-2.amazonaws.com/produc
 @onready var available_matches: VBoxContainer = $MatchesContainer/AvailableMatches
 @onready var match_status: RichTextLabel = $MatchesContainer/MatchStatus
 
-## preload button textures
-#var match_button_texture = preload("res://assets/ui/match-button.png")
-#var match_button_texture_hover = preload("res://assets/ui/match-button-hov.png")
-#var match_button_texture_pressed = preload("res://assets/ui/match-button-pressed.png")
-#var match_button_texture_blue = preload("res://assets/ui/match-button-blue.png")
-#var match_button_texture_blue_hover = preload("res://assets/ui/match-button-blue-hov.png")
-#var match_button_texture_red_hover = preload("res://assets/ui/match-button-red-hov.png")
-
-var mock_user = {}
+var player_entry = {}
 
 #OP CODES
 const REQUEST_MATCHES = "REQUEST_MATCHES" #SERVER(LAMBDA): Retreives matches from DB, returns matches
@@ -30,11 +22,13 @@ const CREATE_MATCHES = "CREATE_MATCHES"
 
 signal start_client(ip, port)
 
+
 func _ready():
 	print("Attempting to connect to server...")
+	print(player_entry.playerId)
 
 	#$LobbyContainer.hide()
-	#$MatchesContainer/UserInfo/Username.text = "[center]" + mock_user.username + "[center]"
+	#$MatchesContainer/Username.text = "[center]" + player_entry.username + "[center]"
 	
 	_connect_to_matchmaking_server()
 
@@ -43,6 +37,8 @@ func _connect_to_matchmaking_server():
 	
 	if error != OK:
 		print("Error connecting to websocket: %s" % [websocket_url])
+	else:
+		print("websocket connected")
 
 func _process_received_message(message):
 	if typeof(message) == TYPE_STRING:
@@ -54,7 +50,7 @@ func _process_received_message(message):
 			if response_msg.op == REQUEST_MATCHES:
 				print("REQUEST_MATCHES")
 				# populate the list of matches buttons
-				var matches = response_msg.response
+				var matches = response_msg.response #THIS IS WHERE WE ESTABLISH THE MATCHES VARIABLE
 				if matches && matches.size() > 0:
 					_add_matches_to_ui(matches)
 					matchmaking_status.text = "[center]Choose a match to enter game![center]"
@@ -76,51 +72,44 @@ func _process_received_message(message):
 			elif response_msg.op == PLAYER_JOINED:
 				print("PLAYER_JOINED")
 				var match_with_players = response_msg.response
-				_build_player_lobby_lists(match_with_players.users)
+				#_build_player_lobby_lists(match_with_players.users)
 				
 			elif response_msg.op == PLAYER_DROPPED:
 				print("PLAYER_DROPPED")
 				var match_with_players = response_msg.response
 				print("Dropped player: %s " % match_with_players.userId)
-				_build_player_lobby_lists(match_with_players.users)
+				#_build_player_lobby_lists(match_with_players.users)
 				
 
+# I Think I have to fix this...
 func _add_matches_to_ui(matches):
 	for match_index in range(matches.size()):
 		print(matches[match_index])
 		
-		var button_text = "# %s | %s | %s " % [str(match_index), matches[match_index].teamMakeup, matches[match_index].map]
+		var button_text = matches[match_index].map
 		
-		#button label
-		var button_label := RichTextLabel.new()
-		button_label.set_text(button_text)
-		button_label.set_size(Vector2(800.0, 100.0))
-		button_label.set_position(Vector2(45.0, 30.0))
-		button_label.add_theme_font_size_override("normal_font_size", 50)
-		button_label.fit_content = true
-		button_label.set_mouse_filter(Control.MOUSE_FILTER_IGNORE)
+		#button
+		var match_button := Button.new()
+		match_button.text = matches[match_index].map
 		
-		# button
-		var button := TextureButton.new()
-		#button.texture_normal = match_button_texture
-		#button.texture_hover = match_button_texture_hover
-		#button.texture_pressed = match_button_texture_pressed
-		button.add_child(button_label)
-		button.set_stretch_mode(TextureButton.STRETCH_SCALE)
+	
 		
-		button.pressed.connect(self._join_match.bind(matches[match_index]))
-		available_matches.add_child(button)
+		match_button.pressed.connect(self._join_match.bind(matches[match_index]))
+		available_matches.add_child(match_button)
+
+		
 		
 func _join_match(match: Dictionary):
+	print("JOIN MATCH IS BEING CALLED")#RIGHT NOW IT IS NOT BEING CALLED!
 	available_matches.hide()
 	match_status.text = "Entering match lobby: \n " + match.teamMakeup + " | " + match.map
 	
 	var join_match_message = {
 		"op": JOIN_MATCH,
 		"matchId": match.matchId, ##DOES THIS HAVE SOMETHING TO DO WITH TEAM SIZE?
-		"playerId": mock_user.playerId,
-		"rank": mock_user.rank,
-		"username": mock_user.username
+		"playerId": player_entry.playerId,
+		"rank": player_entry.rank,
+		"username": player_entry.username
 	}
 	
 	_send_message(join_match_message)
@@ -130,11 +119,11 @@ func _enter_match_lobby(match_with_players):
 	print(match_with_players)
 	
 	$MatchesContainer.hide()
-	$LobbyContainer.show()
+	#LobbyContainer.show()
 	$MatchmakingStatus.text = "[center]Waiting for players...[center]"
-	$LobbyContainer/MapInfo.text = "[center]" + match_with_players.matchInfo.map + " | " + match_with_players.matchInfo.teamMakeup + "[center]"
+	#LobbyContainer/MapInfo.text = "[center]" + match_with_players.matchInfo.map + " | " + match_with_players.matchInfo.teamMakeup + "[center]"
 	
-	_build_player_lobby_lists(match_with_players.users)
+	#_build_player_lobby_lists(match_with_players.users)
 	
 	# this part is bad practice!! (I think he said "Server side should be doing this for you")
 	var match_id = match_with_players.matchInfo.matchId
@@ -144,44 +133,44 @@ func _enter_match_lobby(match_with_players):
 	}
 	_send_message(check_match_ready)
 	
-func _build_player_lobby_lists(match_players):
-	
-	for team_child in $LobbyContainer/Teams/Team1.get_children():
-		team_child.queue_free()
-	for team_child in $LobbyContainer/Teams/Team2.get_children():
-		team_child.queue_free()
-		
-	for player in match_players:
-		print(player)
-		
-		var button_text = " %s | %s " % [player.username, player.rank]
-		
-		# button label
-		var button_label := RichTextLabel.new()
-		button_label.set_text(button_text)
-		button_label.set_size(Vector2(800.0, 100.0))
-		button_label.set_position(Vector2(45.0, 30.0))
-		button_label.add_theme_font_size_override("normal_font_size", 50)
-		button_label.fit_content = true
-		button_label.set_mouse_filter(Control.MOUSE_FILTER_IGNORE)
-		
-		# button
-		var button := TextureButton.new()
-		button.add_child(button_label)
-		button.set_stretch_mode(TextureButton.STRETCH_SCALE)
-		
-		if player.team == "1":
-			#button.texture_normal = match_button_texture_blue
-			#button.texture_hover = match_button_texture_blue_hover
-			$LobbyContainer/Teams/Team1.add_child(button)
-			
-		elif player.team == "2":
-			#button.texture_normal = match_button_texture_pressed
-			#button.texture_hover = match_button_texture_red_hover
-			$LobbyContainer/Teams/Team2.add_child(button)
-		else:
-			print("Player not assigned a team!!")
-		
+#func _build_player_lobby_lists(match_players):
+	#
+	#for team_child in $LobbyContainer/Teams/Team1.get_children():
+		#team_child.queue_free()
+	#for team_child in $LobbyContainer/Teams/Team2.get_children():
+		#team_child.queue_free()
+		#
+	#for player in match_players:
+		#print(player)
+		#
+		#var button_text = " %s | %s " % [player.username, player.rank]
+		#
+		## button label
+		#var button_label := RichTextLabel.new()
+		#button_label.set_text(button_text)
+		#button_label.set_size(Vector2(800.0, 100.0))
+		#button_label.set_position(Vector2(45.0, 30.0))
+		#button_label.add_theme_font_size_override("normal_font_size", 50)
+		#button_label.fit_content = true
+		#button_label.set_mouse_filter(Control.MOUSE_FILTER_IGNORE)
+		#
+		## button
+		#var button := TextureButton.new()
+		#button.add_child(button_label)
+		#button.set_stretch_mode(TextureButton.STRETCH_SCALE)
+		#
+		#if player.team == "1":
+			##button.texture_normal = match_button_texture_blue
+			##button.texture_hover = match_button_texture_blue_hover
+			#$LobbyContainer/Teams/Team1.add_child(button)
+			#
+		#elif player.team == "2":
+			##button.texture_normal = match_button_texture_pressed
+			##button.texture_hover = match_button_texture_red_hover
+			#$LobbyContainer/Teams/Team2.add_child(button)
+		#else:
+			#print("Player not assigned a team!!")
+		#
 
 # lifecycle
 func _send_message(message_to_send):
@@ -232,4 +221,8 @@ func _on_websocket_client_connection_closed() -> void:
 
 
 func _on_websocket_client_message_received(message: Variant) -> void:
+	pass # Replace with function body.
+
+
+func _on_websocket_connection_closed() -> void:
 	pass # Replace with function body.
