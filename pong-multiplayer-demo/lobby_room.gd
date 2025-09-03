@@ -7,8 +7,14 @@ var websocket_url = "wss://w0jm78oqx6.execute-api.us-east-2.amazonaws.com/produc
 @onready var matchmaking_status: RichTextLabel = $MatchmakingStatus
 @onready var available_matches: VBoxContainer = $MatchesContainer/AvailableMatches
 @onready var match_status: RichTextLabel = $MatchesContainer/MatchStatus
+@onready var waiting_label: Label = $Label
 
-var player_entry = {}
+
+
+var player_entry = {}#THIS IS THE PLAYER ENTRY THAT I'M TRYING TO ADJUST
+var player_team: int
+var player_pin: int
+var player_name: String
 
 #OP CODES
 const REQUEST_MATCHES = "REQUEST_MATCHES" #SERVER(LAMBDA): Retreives matches from DB, returns matches
@@ -24,7 +30,8 @@ signal start_client(ip, port)
 
 
 func _ready():
-	print("Attempting to connect to server...")
+	waiting_label.visible = false
+	print("Attempting to connect to Lambda server...")
 	print(player_entry.playerId)
 
 	#$LobbyContainer.hide()
@@ -53,15 +60,19 @@ func _process_received_message(message):
 				var matches = response_msg.response #THIS IS WHERE WE ESTABLISH THE MATCHES VARIABLE
 				if matches && matches.size() > 0:
 					_add_matches_to_ui(matches)
-					matchmaking_status.text = "[center]Choose a match to enter game![center]"
+					matchmaking_status.text = "[center]Choose a match to enter game![center]" # I SHOULD ADD SOMETHING HERE ABOUT STARTING A MATCH
 					
 			elif response_msg.op == MATCH_PLAYERS:
 				print("MATCH_PLAYERS")
+				#print("MESSAGE AFTER MATCH PLAYERS" + message)
+				
 				_enter_match_lobby(response_msg.response)
+		
 			
 			elif response_msg.op == MATCH_READY:
 				print("MATCH_READY")
 				print("Connection info: %s, %s" % [response_msg.response.ip, response_msg.response.port])
+				
 				
 				matchmaking_status.text = "[center]Game Full, Entering Match![center]"
 				
@@ -73,6 +84,8 @@ func _process_received_message(message):
 				print("PLAYER_JOINED")
 				var match_with_players = response_msg.response
 				#_build_player_lobby_lists(match_with_players.users)
+				#print("Player 1 team" + response_msg.response.users[0].team)#I'VE GOT THE TEAM NUMBERS, NOW HOW CAN I USE THEM?
+				#print("Player 2 team" + response_msg.response.users[1].team)
 				
 			elif response_msg.op == PLAYER_DROPPED:
 				print("PLAYER_DROPPED")
@@ -94,13 +107,13 @@ func _add_matches_to_ui(matches):
 		
 	
 		
-		match_button.pressed.connect(self._join_match.bind(matches[match_index]))
+		match_button.pressed.connect(self._join_match.bind(matches[match_index]))#If this is like the example video, clicking this is actually what triggers the game starting. 
 		available_matches.add_child(match_button)
 
 		
 		
 func _join_match(match: Dictionary):
-	print("JOIN MATCH IS BEING CALLED")#RIGHT NOW IT IS NOT BEING CALLED!
+	#print("JOIN MATCH IS BEING CALLED")#RIGHT NOW IT IS NOT BEING CALLED!
 	available_matches.hide()
 	match_status.text = "Entering match lobby: \n " + match.teamMakeup + " | " + match.map
 	
@@ -109,18 +122,21 @@ func _join_match(match: Dictionary):
 		"matchId": match.matchId, ##DOES THIS HAVE SOMETHING TO DO WITH TEAM SIZE?
 		"playerId": player_entry.playerId,
 		"rank": player_entry.rank,
-		"username": player_entry.username
+		"username": player_entry.username,
+		"team": player_entry.team#ADDED THIS JUST NOW
 	}
 	
 	_send_message(join_match_message)
 
 func _enter_match_lobby(match_with_players):
-	print("Enter match lobby")
-	print(match_with_players)
+	print("Enter match lobby")	
 	
 	$MatchesContainer.hide()
 	#LobbyContainer.show()
-	$MatchmakingStatus.text = "[center]Waiting for players...[center]"
+	matchmaking_status.hide()
+	waiting_label.visible = true
+	#$MatchmakingStatus.text = "[center]Waiting for opponent...[center]"
+	
 	#LobbyContainer/MapInfo.text = "[center]" + match_with_players.matchInfo.map + " | " + match_with_players.matchInfo.teamMakeup + "[center]"
 	
 	#_build_player_lobby_lists(match_with_players.users)
@@ -133,44 +149,8 @@ func _enter_match_lobby(match_with_players):
 	}
 	_send_message(check_match_ready)
 	
-#func _build_player_lobby_lists(match_players):
-	#
-	#for team_child in $LobbyContainer/Teams/Team1.get_children():
-		#team_child.queue_free()
-	#for team_child in $LobbyContainer/Teams/Team2.get_children():
-		#team_child.queue_free()
-		#
-	#for player in match_players:
-		#print(player)
-		#
-		#var button_text = " %s | %s " % [player.username, player.rank]
-		#
-		## button label
-		#var button_label := RichTextLabel.new()
-		#button_label.set_text(button_text)
-		#button_label.set_size(Vector2(800.0, 100.0))
-		#button_label.set_position(Vector2(45.0, 30.0))
-		#button_label.add_theme_font_size_override("normal_font_size", 50)
-		#button_label.fit_content = true
-		#button_label.set_mouse_filter(Control.MOUSE_FILTER_IGNORE)
-		#
-		## button
-		#var button := TextureButton.new()
-		#button.add_child(button_label)
-		#button.set_stretch_mode(TextureButton.STRETCH_SCALE)
-		#
-		#if player.team == "1":
-			##button.texture_normal = match_button_texture_blue
-			##button.texture_hover = match_button_texture_blue_hover
-			#$LobbyContainer/Teams/Team1.add_child(button)
-			#
-		#elif player.team == "2":
-			##button.texture_normal = match_button_texture_pressed
-			##button.texture_hover = match_button_texture_red_hover
-			#$LobbyContainer/Teams/Team2.add_child(button)
-		#else:
-			#print("Player not assigned a team!!")
-		#
+func _build_player_lobby_lists(match_players):
+	pass #This function is named the same as in the other game, but that's not what I'm actually going to do with it. 
 
 # lifecycle
 func _send_message(message_to_send):
@@ -214,15 +194,3 @@ func _create_mock_matches():
 		"op": CREATE_MATCHES
 	}
 	_send_message(messageToSend)
-
-
-func _on_websocket_client_connection_closed() -> void:
-	pass # Replace with function body.
-
-
-func _on_websocket_client_message_received(message: Variant) -> void:
-	pass # Replace with function body.
-
-
-func _on_websocket_connection_closed() -> void:
-	pass # Replace with function body.

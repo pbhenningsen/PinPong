@@ -1,58 +1,28 @@
 extends Area2D
 
-const MOTION_SPEED = 150
+const SPEED = 200
+var motion := 0.0
+@export var left := false
 
-@export var left = false
-
-var _motion = 0
-var _you_hidden = false
-
-@onready var _screen_size_y = get_viewport_rect().size.y
-
-@export var player := 1:
-	set(id):
-		player = id
-		$PlayerInput.set_multiplayer_authority(id)
-		
-func _ready():
-	pass
+@onready var screen_h := get_viewport_rect().size.y
 
 func _process(delta):
-	# Is the master of the paddle.
 	if is_multiplayer_authority():
-		_motion = Input.get_axis(&"move_up", &"move_down")
+		var dir = Input.get_axis(&"move_up", &"move_down")
+		_send_input.rpc_id(1, dir) # always send to server (ID 1)
 
-		if not _you_hidden and _motion != 0:
-			_hide_you_label()
+func _physics_process(delta):
+	position.y = clamp(position.y + motion * delta, 16, screen_h - 16)
 
-		_motion *= MOTION_SPEED
+# Client → Server
+@rpc("authority")
+func _send_input(dir: float):
+	if multiplayer.is_server():
+		motion = dir * SPEED
+		_sync_state.rpc(position, motion)
 
-		# Using unreliable to make sure position is updated as fast
-		# as possible, even if one of the calls is dropped.
-		set_pos_and_motion.rpc(position, _motion)
-	else:
-		if not _you_hidden:
-			_hide_you_label()
-
-	translate(Vector2(0, _motion * delta))
-
-	# Set screen limits.
-	position.y = clamp(position.y, 16, _screen_size_y - 16)
-
-
-# Synchronize position and speed to the other peers.
+# Server → Clients
 @rpc("unreliable")
-func set_pos_and_motion(pos, motion):
+func _sync_state(pos: Vector2, mot: float):
 	position = pos
-	_motion = motion
-
-
-func _hide_you_label():
-	_you_hidden = true
-	get_node(^"You").hide()
-
-
-func _on_paddle_area_enter(area):
-	if is_multiplayer_authority():
-		# Random for new direction generated checked each peer.
-		area.bounce.rpc(left, randf())
+	motion = mot

@@ -1,9 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://csp1sddpswhcv"]
+[gd_scene load_steps=7 format=3 uid="uid://csp1sddpswhcv"]
 
 [ext_resource type="Script" uid="uid://xmwn02k7pqrh" path="res://logic/paddle.gd" id="1_5ouof"]
 [ext_resource type="Texture2D" uid="uid://bdf8dei8gx0ju" path="res://PaddleReal.png" id="2_5f3hh"]
+[ext_resource type="Script" uid="uid://cmxe8546whq3g" path="res://player_input.gd" id="2_7s4ra"]
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ti8do"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_5f3hh"]
+properties/0/path = NodePath(".:synced_position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7s4ra"]
+properties/0/path = NodePath(".:input_motion")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tbytw"]
 size = Vector2(8, 32)
@@ -11,11 +20,14 @@ size = Vector2(8, 32)
 [node name="Paddle" type="Area2D"]
 script = ExtResource("1_5ouof")
 
-[node name="ServerSyncronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_ti8do")
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_5f3hh")
 
-[node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_ti8do")
+[node name="PlayerInput" type="Node" parent="."]
+script = ExtResource("2_7s4ra")
+
+[node name="PlayerInput" type="MultiplayerSynchronizer" parent="PlayerInput"]
+replication_config = SubResource("SceneReplicationConfig_7s4ra")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_5f3hh")
@@ -32,4 +44,4 @@ size_flags_horizontal = 2
 size_flags_vertical = 0
 text = "You"
 
-[connection signal="area_entered" from="." to="." method="_on_paddle_area_enter"]
+[connection signal="body_entered" from="." to="." method="_on_paddle_area_enter"]

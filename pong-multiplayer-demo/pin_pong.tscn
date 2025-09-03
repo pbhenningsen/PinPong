@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bs7wtfc3upub"]
+[gd_scene load_steps=4 format=3 uid="uid://bs7wtfc3upub"]
 
 [ext_resource type="Script" uid="uid://q8h46pvjtv70" path="res://pin_pong.gd" id="1_5pfs2"]
 [ext_resource type="Texture2D" uid="uid://b10swafhe08oj" path="res://separator.png" id="2_evy6t"]
-[ext_resource type="PackedScene" uid="uid://bjmldn1x3lpa" path="res://ball.tscn" id="3_cal4j"]
 [ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="4_jq1q1"]
 
 [node name="PinPong" type="Node2D"]
@@ -14,6 +13,7 @@ spawn_path = NodePath("../Players")
 
 [node name="BallSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://bjmldn1x3lpa")
+spawn_path = NodePath("../Ball")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_right = 640.0
@@ -61,8 +61,7 @@ offset = Vector2(320, 200)
 
 [node name="Players" type="Node2D" parent="."]
 
-[node name="Ball" parent="." instance=ExtResource("3_cal4j")]
-position = Vector2(320.387, 189.525)
+[node name="Ball" type="Node2D" parent="."]
 
 [node name="Score" type="CanvasLayer" parent="."]
 
