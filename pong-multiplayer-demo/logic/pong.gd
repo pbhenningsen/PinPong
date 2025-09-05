@@ -9,7 +9,7 @@ var score_right = 0
 
 var players_in_match = 0
 
-var connected_players = {}
+#var connected_players = {}
 
 @onready var score_left_node = $ScoreLeft
 @onready var score_right_node = $ScoreRight
@@ -24,17 +24,13 @@ func _ready():
 	multiplayer.peer_disconnected.connect(del_player)
 	multiplayer.connected_to_server.connect(_on_connected_ok)
 		
-	#for id in multiplayer.get_peers():
-		#add_player(id)
-		
-
 	print("Unique id: ", multiplayer.get_unique_id())
 	
 func _on_player_connected(id: int):
 	print("_on_player_connected is running")
 	print("I am " + str(multiplayer.get_unique_id()) + " and this is the player that just connected to us: " + str(id),)
 	#FIX THIS PART
-	awaken_client.rpc_id(id)
+	#awaken_client.rpc_id(id)
 	print("THIS IS WHERE WE NEED TO REGISTER THE PLAYER")
 	print("Let's take a look at what the Globals player_entry looks like: " + str(Globals.player_entry))
 	#if !multiplayer.is_server():
@@ -49,48 +45,16 @@ func _on_connected_ok():
 	
 	
 @rpc("any_peer", "call_local")
-func awaken_client():
-	print("register player is running, and I, " + str(multiplayer.get_unique_id()) + " am the one running it")
-	print("register player is runing and I, " + str(multiplayer.get_remote_sender_id()) + " am the one sending it.") 
-	var player_id = multiplayer.get_unique_id()
-	var player_name = Globals.player_entry["name"]
-	var player_pin = Globals.player_entry["pin"]
-	register_player.rpc(player_id, player_name, player_pin)
-	print("This is what my global player entry currently looks like " + str(Globals.player_entry))
-
-	
-	
-@rpc("any_peer", "call_local")
-func register_player(player_id, player_name, player_pin):
-	connected_players[player_id] = {}
-	connected_players[player_id]["name"] = player_name
-	connected_players[player_id]["pin"] = player_pin
-	print("This is what connected players looks like(after the register_player rpc call: " + str(connected_players))
-	
-	
-
-	
-	
-#func request_spawn():
-	#var player_name = Globals.player_entry["name"]
-	#var player_pin = Globals.player_entry["pin"]
-	#var player_id = multiplayer.get_unique_id()
-	#register_player.rpc_id(1, player_id, player_name, player_pin)
-	#add_player.rpc_id(1, player_id, player_name, player_pin)
-	
-	
-	
-	
-@rpc("any_peer", "call_local")
 func add_player(id):
 	players_in_match += 1
 	print("add_player is running")
 	var paddle = preload("res://paddle.tscn").instantiate()
-	var player_name = Globals.player_entry["name"]
-	var player_pin = Globals.player_entry["pin"]
+	#var player_name = Globals.connected_players["name"]
+	#var player_pin = Globals.connected_players["pin"]
 	var player_id = multiplayer.get_unique_id()
-	awaken_client.rpc_id(id)
+	#awaken_client.rpc_id(id)
 	paddle.player = id
+	print("This is paddle.player" + str(paddle.player))
 	if players_in_match == 1:
 		paddle.position = Vector2(32, 180)
 	elif players_in_match == 2:
@@ -98,6 +62,7 @@ func add_player(id):
 		paddle.left = true
 	paddle.name = str(id)
 	$Players.add_child(paddle, true)
+	
 	
 	
 func del_player():

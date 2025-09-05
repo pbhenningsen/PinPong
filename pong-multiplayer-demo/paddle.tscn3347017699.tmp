@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://cpw46256eirwq"]
+[gd_scene load_steps=7 format=3 uid="uid://cpw46256eirwq"]
 
 [ext_resource type="Script" uid="uid://bxod88k0fgj25" path="res://new_paddle.gd" id="1_tbytw"]
 [ext_resource type="Texture2D" uid="uid://bdf8dei8gx0ju" path="res://PaddleReal.png" id="2_tbytw"]
-[ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="3_2bcmx"]
 [ext_resource type="Script" uid="uid://b6addjqd7w5yt" path="res://input.gd" id="3_r112f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tbytw"]
@@ -37,7 +36,6 @@ offset_right = 27.0
 offset_bottom = -18.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
-theme = ExtResource("3_2bcmx")
 text = "You"
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]

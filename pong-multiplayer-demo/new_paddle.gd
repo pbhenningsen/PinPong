@@ -11,15 +11,26 @@ const MOTION_SPEED = 150
 		print("Set ID ran, here is the ID it set:" + str(id))
 		player = id
 		$PlayerInput.set_multiplayer_authority(id)
+		print("This is what Global.connected_players looks like in init " + str(Globals.connected_players) + "for player " + str(player))
+		#$You.text = Globals.connected_players[player]["name"]
+
 
 @export var left = false
 
 var _motion = 0
 var _you_hidden = false
 
+
 @onready var _screen_size_y = get_viewport_rect().size.y
 
+
+#func _init():
+	#print("running_init")
+	#for key in Globals.connected_players:
+		#print(str(key))
+
 func _ready():
+	Globals._both_players_registered.connect(_set_label_text)
 	if not multiplayer.is_server():
 		set_process(false)
 		
@@ -38,7 +49,8 @@ func _apply_input(delta: float):
 func move(delta):
 	pass
 
-
+func _set_label_text():
+	$You.text = Globals.connected_players[player]["name"]
 
 func _process(delta):
 	# Is the master of the paddle.

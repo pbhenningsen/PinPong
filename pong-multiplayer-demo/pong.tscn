@@ -64,6 +64,7 @@ offset_bottom = 28.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
 theme = ExtResource("4_eipaa")
+text = "XXXX"
 
 [node name="ScoreRight" type="Label" parent="."]
 texture_filter = 1
@@ -74,6 +75,7 @@ offset_bottom = 28.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
 theme = ExtResource("4_eipaa")
+text = "XXXX"
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://cpw46256eirwq")

@@ -16,11 +16,33 @@ const lobby_room = "res://lobby_room.tscn"
 var player_name_for_game
 var player_pin_for_game
 
+#var connected_players = {}
+
+signal both_players_registered
 
 func _ready():
+	multiplayer.connected_to_server.connect(_send_player_data)
 	if OS.has_feature("dedicated_server"):
 		# if this is a dedicated server, run as a server
 		_on_host_pressed()
+
+func _send_player_data():
+	var player_id = multiplayer.get_unique_id()
+	var player_name = Globals.player_entry["name"]
+	var player_pin = Globals.player_entry["pin"]
+	register_player.rpc(player_id, player_name, player_pin)
+	
+@rpc("any_peer", "call_local")
+func register_player(player_id, player_name, player_pin):
+	Globals.connected_players[player_id] = {}
+	Globals.connected_players[player_id]["name"] = player_name
+	Globals.connected_players[player_id]["pin"] = player_pin
+	print("This is what connected players looks like(after the register_player rpc call: " + str(Globals.connected_players))
+	print("This is the size of global.connected_players: " + str(Globals.connected_players.size()))
+	if Globals.connected_players.size() > 1:
+		Globals._both_players_registered.emit()
+	
+	
 
 func _on_host_pressed():
 	var peer = ENetMultiplayerPeer.new()
@@ -33,7 +55,8 @@ func start_game():
 	$UI.hide()
 	if multiplayer.is_server():#notice that only the sever is being told to change levels. 
 		print("server changing to level scene...")
-		change_level.call_deferred(load(gameplay_level))#This is where I'm loading the game, which can't currently happen because neither of the players is in it. 
+		change_level.call_deferred(load(gameplay_level))#TTHIS IS WHERE WE FIRST CONNECT TO THE SERVER, THIS IS WHERE I COULD CAUSE THE CLIENTS TO COME TO LIFE. 
+		
 		
 func change_level(scene: PackedScene):
 	print("change_level is running")
