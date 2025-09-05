@@ -51,9 +51,12 @@ func _process_received_message(message):
 				print("REQUEST_MATCHES")
 				# populate the list of matches buttons
 				var matches = response_msg.response #THIS IS WHERE WE ESTABLISH THE MATCHES VARIABLE
+				if matches.size() == 0:
+					_create_mock_matches()
 				if matches && matches.size() > 0:
+					#_join_match()
 					_add_matches_to_ui(matches)
-					matchmaking_status.text = "[center]Choose a match to enter game![center]" # I SHOULD ADD SOMETHING HERE ABOUT STARTING A MATCH
+					#matchmaking_status.text = "[center]Choose a match to enter game![center]" # I SHOULD ADD SOMETHING HERE ABOUT STARTING A MATCH
 					
 			elif response_msg.op == MATCH_PLAYERS:
 				print("MATCH_PLAYERS")
@@ -90,13 +93,15 @@ func _process_received_message(message):
 # I Think I have to fix this...
 func _add_matches_to_ui(matches):
 	for match_index in range(matches.size()):
-		print(matches[match_index])
+		#print(matches[match_index])
 		
 		var button_text = matches[match_index].map
+		#var button_text = "Join a match!"
 		
 		#button
 		var match_button := Button.new()
-		match_button.text = matches[match_index].map
+		#match_button.text = matches[match_index].map
+		match_button.text = "Join the next match!"
 		
 	
 		
@@ -117,8 +122,7 @@ func _join_match(match: Dictionary):
 		"rank": player_entry.rank,
 		"username": player_entry.username,
 		"team": player_entry.team,#ADDED THIS JUST NOW
-		"pin": player_entry.pin,
-		"Ass": "The word ass"
+		#"pin": player_entry.pin,
 	}
 	
 	_send_message(join_match_message)
@@ -148,7 +152,7 @@ func _send_message(message_to_send):
 	_client.send(json_message)
 	
 func _on_websocket_message_received(message):
-	print("Message received: %s" % message)
+	#print("Message received: %s" % message)
 	_process_received_message(message)
 
 func _on_websocket_client_connection_close():
