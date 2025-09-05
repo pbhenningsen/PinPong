@@ -31,6 +31,7 @@ func _ready():
 
 # Callback from SceneTree.
 func _player_connected(_id):
+	print("Player has been connected, will now be registered with RPC_ID.")
 	# Someone connected, start the game!
 	var pong = load("res://pong.tscn").instantiate()
 	# Connect deferred so we can safely erase it from the callback.

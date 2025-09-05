@@ -12,6 +12,7 @@ const lobby_room = "res://lobby_room.tscn"
 @onready var player_name: LineEdit = $UI/StartupPanel/Name
 @onready var player_pin: LineEdit = $UI/StartupPanel/Pin
 
+#Player Info For Game
 var player_name_for_game
 var player_pin_for_game
 
@@ -22,27 +23,24 @@ func _ready():
 		_on_host_pressed()
 
 func _on_host_pressed():
-	print("host pressed")
 	var peer = ENetMultiplayerPeer.new()
 	peer.create_server(SERVER_PORT)
 	multiplayer.multiplayer_peer = peer
 	start_game()
 
 func start_game():
+	print("start_game is running")
 	$UI.hide()
-	
-
-	
 	if multiplayer.is_server():#notice that only the sever is being told to change levels. 
 		print("server changing to level scene...")
 		change_level.call_deferred(load(gameplay_level))#This is where I'm loading the game, which can't currently happen because neither of the players is in it. 
 		
 func change_level(scene: PackedScene):
+	print("change_level is running")
 	var level = level_node
 	for c in level.get_children():
 		level.remove_child(c)
 		c.queue_free()
-		
 	level.add_child(scene.instantiate())
 	
 
@@ -56,10 +54,6 @@ func _on_client_pressed(ip = SERVER_IP, port = SERVER_PORT):
 func _on_find_match_pressed():
 	#print("Find match pressed!")
 	$UI.hide()
-	
-	player_name_for_game = player_name.text
-	player_pin_for_game = player_pin.text
-	
 	var player_id = str(randi() % 1000)
 	var player_entry = {
 		"pin": player_pin.text,
@@ -69,18 +63,18 @@ func _on_find_match_pressed():
 		"team": 0
 	}
 
-	#print("Player name for game: " + player_name_for_game)
-	#print("Player pin for game: " + player_pin_for_game)
-	
+	var player_name = player_name.text
 	var lobby = preload(lobby_room).instantiate()
+	print("This is where we initially store the player's name and pin, first in their Globals folder, and next in the variable in lobby.gd called player_entry")
 	lobby.player_entry = player_entry # I NEED TO STORE THIS IN THE GAMEPLAY LEVEL TOO
-	
-	lobby.start_client.connect(start_client)
+	Globals.player_entry["name"] = player_entry["username"]
+	Globals.player_entry["pin"] = player_entry["pin"]
+	lobby.start_client.connect(start_client)# The host has already connected to the server, but we (the client )haven't...we're wiating until the lobby (tell sus
 	lobby_placeholder.add_child(lobby)
 
 func start_client(ip = SERVER_IP, port = SERVER_PORT):
-	print("start_client %s, %s" % [ip, port])
 	_on_client_pressed(ip,port)
-	
 	lobby_placeholder.get_child(0).hide()
+
+
 	

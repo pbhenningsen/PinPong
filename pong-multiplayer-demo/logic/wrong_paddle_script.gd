@@ -6,6 +6,11 @@ var motion := 0.0
 
 @onready var screen_h := get_viewport_rect().size.y
 
+func _init():
+	var player_name = Globals.player_entry["name"]
+	var player_pin = Globals.player_entry["pin"]
+
+
 func _process(delta):
 	if is_multiplayer_authority():
 		var dir = Input.get_axis(&"move_up", &"move_down")

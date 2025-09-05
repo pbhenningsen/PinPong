@@ -4,6 +4,7 @@ const MOTION_SPEED = 150
 
 @onready var player_input: Node = $PlayerInput
 
+@onready var you: Label = $You
 
 @export var player := 1:
 	set(id):
@@ -51,7 +52,7 @@ func _process(delta):
 
 		# Using unreliable to make sure position is updated as fast
 		# as possible, even if one of the calls is dropped.
-		set_pos_and_motion.rpc(position, _motion)# I guess that instead of calling this, the PlayerInput will replicate it?
+		set_pos_and_motion.rpc(position, _motion)# I guess that instead of calling this, the PlayerInput will replicate it? T
 	else:
 		if not _you_hidden:
 			_hide_you_label()
@@ -72,6 +73,8 @@ func _hide_you_label():
 	_you_hidden = true
 	get_node(^"You").hide()
 
+func set_player_name(value):
+	$You.text = value
 
 #func _on_paddle_area_enter(area):
 	#if is_multiplayer_authority():

@@ -9,12 +9,7 @@ var websocket_url = "wss://w0jm78oqx6.execute-api.us-east-2.amazonaws.com/produc
 @onready var match_status: RichTextLabel = $MatchesContainer/MatchStatus
 @onready var waiting_label: Label = $Label
 
-
-
 var player_entry = {}#THIS IS THE PLAYER ENTRY THAT I'M TRYING TO ADJUST
-var player_team: int
-var player_pin: int
-var player_name: String
 
 #OP CODES
 const REQUEST_MATCHES = "REQUEST_MATCHES" #SERVER(LAMBDA): Retreives matches from DB, returns matches
@@ -30,12 +25,10 @@ signal start_client(ip, port)
 
 
 func _ready():
+	print("We have now entered the lobby")
+	print("Player name: " + player_entry["username"] + " Player pin: " + player_entry["pin"])
 	waiting_label.visible = false
 	print("Attempting to connect to Lambda server...")
-	print(player_entry.playerId)
-
-	#$LobbyContainer.hide()
-	#$MatchesContainer/Username.text = "[center]" + player_entry.username + "[center]"
 	
 	_connect_to_matchmaking_server()
 
@@ -113,7 +106,7 @@ func _add_matches_to_ui(matches):
 		
 		
 func _join_match(match: Dictionary):
-	#print("JOIN MATCH IS BEING CALLED")#RIGHT NOW IT IS NOT BEING CALLED!
+	print("join_match is running")#RIGHT NOW IT IS NOT BEING CALLED!
 	available_matches.hide()
 	match_status.text = "Entering match lobby: \n " + match.teamMakeup + " | " + match.map
 	
@@ -123,23 +116,20 @@ func _join_match(match: Dictionary):
 		"playerId": player_entry.playerId,
 		"rank": player_entry.rank,
 		"username": player_entry.username,
-		"team": player_entry.team#ADDED THIS JUST NOW
+		"team": player_entry.team,#ADDED THIS JUST NOW
+		"pin": player_entry.pin,
+		"Ass": "The word ass"
 	}
 	
 	_send_message(join_match_message)
 
 func _enter_match_lobby(match_with_players):
-	print("Enter match lobby")	
+	print("enter_match_lobby is running")	
 	
 	$MatchesContainer.hide()
 	#LobbyContainer.show()
 	matchmaking_status.hide()
 	waiting_label.visible = true
-	#$MatchmakingStatus.text = "[center]Waiting for opponent...[center]"
-	
-	#LobbyContainer/MapInfo.text = "[center]" + match_with_players.matchInfo.map + " | " + match_with_players.matchInfo.teamMakeup + "[center]"
-	
-	#_build_player_lobby_lists(match_with_players.users)
 	
 	# this part is bad practice!! (I think he said "Server side should be doing this for you")
 	var match_id = match_with_players.matchInfo.matchId
@@ -174,19 +164,6 @@ func _on_websocket_client_connected_to_server():
 	}
 	
 	_send_message(request_matches)
-
-func _on_send_test_message_pressed():
-	print("Sending test message...")
-#	var dict = {
-#		"id": "1234",
-#		"op": "card_played_123"
-#	}
-	var dict = {
-		"id": "1234",
-		"op": "my_cool_op"
-	}
-	var jsonMessage = JSON.stringify(dict)
-	_client.send(jsonMessage)
 
 # Create mock matches
 func _create_mock_matches():

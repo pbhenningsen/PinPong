@@ -1,4 +1,6 @@
 extends Node
 
-var player_atm_pin: int
-var player_name: String
+var player_entry = {
+	"name": "Host",
+	"pin": "0000"
+}
