@@ -22,18 +22,21 @@ signal both_players_registered
 
 
 func _ready(): 
-	pass
+	$GameTitle/Logo.hide()
 
 func _on_start_game_pressed() -> void:
 	$GameTitle/TitleLabel.hide()
 	$GameTitle/StartButton.hide()
-	$GameTitle/Logo.visible = true
+	$GameTitle/Logo.show()
+	$GameTitle/AnimationPlayer.play("logo_fade_in")
 	#await get_tree().create_timer(2.0)
 	#$GameTitle/Logo.visible = false
 	multiplayer.connected_to_server.connect(_send_player_data)
 	if OS.has_feature("dedicated_server"):
 		# if this is a dedicated server, run as a server
 		_on_host_pressed()
+	await get_tree().create_timer(2.5).timeout
+	$GameTitle.hide()
 
 
 

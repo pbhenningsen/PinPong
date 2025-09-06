@@ -51,7 +51,7 @@ func _process_received_message(message):
 				print("REQUEST_MATCHES")
 				# populate the list of matches buttons
 				var matches = response_msg.response #THIS IS WHERE WE ESTABLISH THE MATCHES VARIABLE
-				if matches.size() == 0:
+				if matches.size() == 1:
 					_create_mock_matches()
 				if matches && matches.size() > 0:
 					_join_match(matches[0])
@@ -154,7 +154,7 @@ func _send_message(message_to_send):
 	_client.send(json_message)
 	
 func _on_websocket_message_received(message):
-	#print("Message received: %s" % message)
+	print("Message received: %s" % message)
 	_process_received_message(message)
 
 func _on_websocket_client_connection_close():
