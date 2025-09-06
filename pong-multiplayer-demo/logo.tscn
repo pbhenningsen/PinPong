@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3 uid="uid://b24b5rxexn7gj"]
+
+[ext_resource type="Script" uid="uid://duev4tn8xwhkw" path="res://logo.gd" id="1_hgdat"]
+[ext_resource type="Texture2D" uid="uid://bnybwpk7wykcj" path="res://WoeLogo.png" id="1_iyh20"]
+
+[node name="Logo" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hgdat")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -522.0
+offset_top = -407.5
+offset_right = 522.0
+offset_bottom = 407.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.4, 0.4)
+pivot_offset = Vector2(522, 407)
+texture = ExtResource("1_iyh20")

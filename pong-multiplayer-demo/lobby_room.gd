@@ -54,8 +54,8 @@ func _process_received_message(message):
 				if matches.size() == 0:
 					_create_mock_matches()
 				if matches && matches.size() > 0:
-					#_join_match()
-					_add_matches_to_ui(matches)
+					_join_match(matches[0])
+					#_add_matches_to_ui(matches)
 					#matchmaking_status.text = "[center]Choose a match to enter game![center]" # I SHOULD ADD SOMETHING HERE ABOUT STARTING A MATCH
 					
 			elif response_msg.op == MATCH_PLAYERS:
@@ -90,30 +90,32 @@ func _process_received_message(message):
 				#_build_player_lobby_lists(match_with_players.users)
 				
 
+
 # I Think I have to fix this...
 func _add_matches_to_ui(matches):
-	for match_index in range(matches.size()):
-		#print(matches[match_index])
+	#for match_index in range(matches.size()):
+	var next_match = matches[0]
 		
-		var button_text = matches[match_index].map
+		
+	#var button_text = matches[0].map
 		#var button_text = "Join a match!"
 		
 		#button
-		var match_button := Button.new()
+	var match_button := Button.new()
 		#match_button.text = matches[match_index].map
-		match_button.text = "Join the next match!"
+	match_button.text = "Join the next match!"
 		
 	
 		
-		match_button.pressed.connect(self._join_match.bind(matches[match_index]))#If this is like the example video, clicking this is actually what triggers the game starting. 
-		available_matches.add_child(match_button)
+	match_button.pressed.connect(self._join_match.bind(matches[0]))#If this is like the example video, clicking this is actually what triggers the game starting. 
+	available_matches.add_child(match_button)
 
 		
 		
 func _join_match(match: Dictionary):
 	print("join_match is running")#RIGHT NOW IT IS NOT BEING CALLED!
 	available_matches.hide()
-	match_status.text = "Entering match lobby: \n " + match.teamMakeup + " | " + match.map
+	#match_status.text = "Entering match lobby: \n " + match.teamMakeup + " | " + match.map
 	
 	var join_match_message = {
 		"op": JOIN_MATCH,
@@ -161,7 +163,7 @@ func _on_websocket_client_connection_close():
 	
 func _on_websocket_client_connected_to_server():
 	print("Client connected to server...")
-	$MatchmakingStatus.text = "[center]Looking for matches...[center]"
+	#$MatchmakingStatus.text = "[center]Looking for matches...[center]"
 	
 	var request_matches = {
 		"op": REQUEST_MATCHES

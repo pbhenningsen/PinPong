@@ -37,7 +37,6 @@ offset_right = 121.0
 offset_bottom = 54.0
 grow_horizontal = 2
 bbcode_enabled = true
-text = "[center]Choose a match![center]"
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -55,6 +54,7 @@ grow_vertical = 2
 text = "Waiting for opponent..."
 
 [node name="MatchesContainer" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -69,6 +69,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="AvailableMatches" type="VBoxContainer" parent="MatchesContainer"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -87,6 +88,7 @@ grow_vertical = 2
 theme_override_font_sizes/normal_font_size = 10
 
 [node name="CreateMockMatches" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_right = 98.0
 offset_bottom = 30.0
