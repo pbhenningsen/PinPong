@@ -55,7 +55,7 @@ offset = Vector2(320, 200)
 
 [node name="Ball" type="Node" parent="."]
 
-[node name="ScoreLeft" type="Label" parent="."]
+[node name="Pin1" type="Label" parent="."]
 texture_filter = 1
 offset_left = 248.0
 offset_top = 8.0
@@ -66,7 +66,7 @@ size_flags_vertical = 0
 theme = ExtResource("4_eipaa")
 text = "XXXX"
 
-[node name="ScoreRight" type="Label" parent="."]
+[node name="Pin2" type="Label" parent="."]
 texture_filter = 1
 offset_left = 330.0
 offset_top = 8.0
@@ -80,5 +80,20 @@ text = "XXXX"
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://cpw46256eirwq")
 spawn_path = NodePath("../Players")
+
+[node name="Name1" type="Label" parent="."]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 243.0
+offset_bottom = 27.0
+theme = ExtResource("4_eipaa")
+
+[node name="Name2" type="Label" parent="."]
+offset_left = 407.0
+offset_top = 4.0
+offset_right = 636.0
+offset_bottom = 27.0
+theme = ExtResource("4_eipaa")
+horizontal_alignment = 2
 
 [connection signal="pressed" from="ExitGame" to="." method="_on_exit_game_pressed"]

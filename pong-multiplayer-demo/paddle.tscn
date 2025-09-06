@@ -31,6 +31,7 @@ texture = ExtResource("2_tbytw")
 shape = SubResource("RectangleShape2D_tbytw")
 
 [node name="You" type="Label" parent="."]
+visible = false
 offset_left = -26.0
 offset_top = -41.0
 offset_right = 27.0

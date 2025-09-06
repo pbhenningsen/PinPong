@@ -7,7 +7,7 @@ var websocket_url = "wss://w0jm78oqx6.execute-api.us-east-2.amazonaws.com/produc
 @onready var matchmaking_status: RichTextLabel = $MatchmakingStatus
 @onready var available_matches: VBoxContainer = $MatchesContainer/AvailableMatches
 @onready var match_status: RichTextLabel = $MatchesContainer/MatchStatus
-@onready var waiting_label: Label = $Label
+@onready var waiting_label: Label = $WaitingLabel
 
 var player_entry = {}#THIS IS THE PLAYER ENTRY THAT I'M TRYING TO ADJUST
 
@@ -22,12 +22,13 @@ const MATCH_READY = "MATCH_READY" #SERVER(LAMBDA): Once the match is ready, it w
 const CREATE_MATCHES = "CREATE_MATCHES"
 
 signal start_client(ip, port)
+signal create_new_matches
 
 
 func _ready():
 	print("We have now entered the lobby")
 	print("Player name: " + player_entry["username"] + " Player pin: " + player_entry["pin"])
-	waiting_label.visible = false
+	$WaitingLabel.visible = true
 	print("Attempting to connect to Lambda server...")
 	
 	_connect_to_matchmaking_server()
@@ -51,9 +52,10 @@ func _process_received_message(message):
 				print("REQUEST_MATCHES")
 				# populate the list of matches buttons
 				var matches = response_msg.response #THIS IS WHERE WE ESTABLISH THE MATCHES VARIABLE
-				if matches.size() == 1:
-					_create_mock_matches()
+				#if matches.size() < 5:
+					#create_new_matches.emit()
 				if matches && matches.size() > 0:
+					#I Could have everyone create a single match just so they replenish what was lost. 
 					_join_match(matches[0])
 					#_add_matches_to_ui(matches)
 					#matchmaking_status.text = "[center]Choose a match to enter game![center]" # I SHOULD ADD SOMETHING HERE ABOUT STARTING A MATCH
@@ -135,7 +137,7 @@ func _enter_match_lobby(match_with_players):
 	$MatchesContainer.hide()
 	#LobbyContainer.show()
 	matchmaking_status.hide()
-	waiting_label.visible = true
+	#waiting_label.visible = true
 	
 	# this part is bad practice!! (I think he said "Server side should be doing this for you")
 	var match_id = match_with_players.matchInfo.matchId

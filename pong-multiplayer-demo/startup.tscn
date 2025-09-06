@@ -200,7 +200,6 @@ text = "HOST
 "
 
 [node name="Client" type="Button" parent="UI"]
-visible = false
 layout_mode = 0
 offset_left = 519.0
 offset_top = 360.0
@@ -282,11 +281,6 @@ libraries = {
 }
 
 [node name="LobbyPlaceholder" type="Node" parent="."]
-
-[node name="Button" type="Button" parent="."]
-offset_right = 81.0
-offset_bottom = 44.0
-text = "ASS"
 
 [connection signal="pressed" from="UI/FindMatch" to="." method="_on_find_match_pressed"]
 [connection signal="pressed" from="UI/Host" to="." method="_on_host_pressed"]

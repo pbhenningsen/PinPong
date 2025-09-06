@@ -23,9 +23,19 @@ var _you_hidden = false
 
 @onready var _screen_size_y = get_viewport_rect().size.y
 
+signal set_name_and_pin(paddle_side, player_name, player_pin)
 
+#
 #func _init():
 	#print("running_init")
+	#if left == true:
+		#var player_1_name = Globals.connected_players[player]["name"]
+		#var player_1_pin = Globals.connected_players[player]["pin"]
+		#paddle_side_set.emit(1, player_1_name, player_1_pin)
+	#else:
+		#var player_2_name = Globals.connected_players[player]["name"]
+		#var player_2_pin = Globals.connected_players[player]["pin"]
+		#paddle_side_set.emit(2, player_2_name, player_2_pin)
 	#for key in Globals.connected_players:
 		#print(str(key))
 
@@ -51,6 +61,15 @@ func move(delta):
 
 func _set_label_text():
 	$You.text = Globals.connected_players[player]["name"]
+	var player_name = Globals.connected_players[player]["name"]
+	var player_pin = Globals.connected_players[player]["pin"]
+	var paddle_side
+	if left == true: 
+		paddle_side = 2
+	else:
+		paddle_side = 1
+	set_name_and_pin.emit(paddle_side, player_name, player_pin)
+	
 
 func _process(delta):
 	# Is the master of the paddle.
@@ -74,7 +93,7 @@ func _process(delta):
 	# Set screen limits.
 	position.y = clamp(position.y, 16, _screen_size_y - 16)
 
-# Synchronize position and speed to the other peers.
+#Synchronize position and speed to the other peers.
 @rpc("authority", "unreliable", "call_remote") #This is where the RPC synchronization shit is hap
 func set_pos_and_motion(pos, motion):
 	position = pos
