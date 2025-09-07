@@ -60,16 +60,16 @@ func add_player(id):
 	print("This is paddle.player" + str(paddle.player))
 	if players_in_match == 1:
 		paddle.position = Vector2(32, 180)
+		paddle.left = true
 	elif players_in_match == 2:
 		paddle.position = Vector2(600, 180)
-		paddle.left = true
 	paddle.name = str(id)
 	#paddle.player_side_set.connect(_fill_name_and_pin)
 	$Players.add_child(paddle, true)
 	
 @rpc("authority", "call_local")
 func _fill_name_and_pin(player_side, player_name, player_pin):
-	if player_side == 1:
+	if player_side == 2:
 		$Pin2.text = player_pin
 		$Name2.text = player_name
 	else:

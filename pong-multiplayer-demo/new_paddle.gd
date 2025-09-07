@@ -65,9 +65,9 @@ func _set_label_text():
 	var player_pin = Globals.connected_players[player]["pin"]
 	var paddle_side
 	if left == true: 
-		paddle_side = 2
-	else:
 		paddle_side = 1
+	else:
+		paddle_side = 2
 	set_name_and_pin.emit(paddle_side, player_name, player_pin)
 	
 

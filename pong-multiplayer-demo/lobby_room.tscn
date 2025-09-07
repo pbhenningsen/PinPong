@@ -88,6 +88,7 @@ grow_vertical = 2
 theme_override_font_sizes/normal_font_size = 10
 
 [node name="CreateMockMatches" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_right = 98.0
 offset_bottom = 30.0

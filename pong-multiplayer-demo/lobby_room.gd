@@ -10,6 +10,7 @@ var websocket_url = "wss://w0jm78oqx6.execute-api.us-east-2.amazonaws.com/produc
 @onready var waiting_label: Label = $WaitingLabel
 
 var player_entry = {}#THIS IS THE PLAYER ENTRY THAT I'M TRYING TO ADJUST
+var matches_remaining
 
 #OP CODES
 const REQUEST_MATCHES = "REQUEST_MATCHES" #SERVER(LAMBDA): Retreives matches from DB, returns matches
@@ -52,6 +53,7 @@ func _process_received_message(message):
 				print("REQUEST_MATCHES")
 				# populate the list of matches buttons
 				var matches = response_msg.response #THIS IS WHERE WE ESTABLISH THE MATCHES VARIABLE
+				matches_remaining = matches
 				#if matches.size() < 5:
 					#create_new_matches.emit()
 				if matches && matches.size() > 0:
@@ -80,7 +82,7 @@ func _process_received_message(message):
 			
 			elif response_msg.op == PLAYER_JOINED:
 				print("PLAYER_JOINED")
-				var match_with_players = response_msg.response
+				var match_with_players = response_msg.response # MAYBE ADD ANOTHER MATCH HERE IF IT'S EMPTY
 				#_build_player_lobby_lists(match_with_players.users)
 				#print("Player 1 team" + response_msg.response.users[0].team)#I'VE GOT THE TEAM NUMBERS, NOW HOW CAN I USE THEM?
 				#print("Player 2 team" + response_msg.response.users[1].team)
