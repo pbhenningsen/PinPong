@@ -126,7 +126,7 @@ func _join_match(match: Dictionary):
 		"rank": player_entry.rank,
 		"username": player_entry.username,
 		"team": player_entry.team,#ADDED THIS JUST NOW
-		#"pin": player_entry.pin,
+		"pin": player_entry.pin,
 	}
 	
 	_send_message(join_match_message)
@@ -178,4 +178,5 @@ func _create_mock_matches():
 	var messageToSend = {
 		"op": CREATE_MATCHES
 	}
+	print("create mock matches just ran")
 	_send_message(messageToSend)
