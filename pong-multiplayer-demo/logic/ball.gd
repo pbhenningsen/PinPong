@@ -7,11 +7,16 @@ var direction = Vector2.LEFT
 @export var _speed = DEFAULT_SPEED
 
 @onready var _screen_size = get_viewport_rect().size
+@onready var pong: Node2D = $".."
+
 
 func _ready():
 	if not multiplayer.is_server():
 		set_process(false)
 		set_physics_process(false)
+	else:
+		pong.game_over.connect(_kill_that_ball)
+		
 	
 
 func _process(delta):
@@ -65,6 +70,9 @@ func stop():
 	stopped = true
 
 
+func _kill_that_ball():
+	print("Ass")
+	queue_free()
 
 func _reset_ball(for_left):
 	position = _screen_size / 2

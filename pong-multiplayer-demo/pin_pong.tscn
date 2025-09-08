@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://c3b41r5cux2ae"]
+[gd_scene load_steps=4 format=3 uid="uid://wv6n0dmp4xhf"]
 
 [ext_resource type="Texture2D" uid="uid://b10swafhe08oj" path="res://separator.png" id="2_evy6t"]
 [ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="4_jq1q1"]

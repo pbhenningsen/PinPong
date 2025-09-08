@@ -61,6 +61,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_ltcgh")
+metadata/_edit_lock_ = true
 
 [node name="ColorRect" type="ColorRect" parent="UI"]
 layout_mode = 1
@@ -180,13 +181,14 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -92.0
-offset_top = -62.0
-offset_right = 92.0
-offset_bottom = -38.0
+offset_left = -118.5
+offset_top = -55.0
+offset_right = 118.5
+offset_bottom = -19.0
 grow_horizontal = 2
 grow_vertical = 0
 text = "Find Match!"
+metadata/_edit_group_ = true
 
 [node name="Host" type="Button" parent="UI"]
 layout_mode = 1
@@ -248,10 +250,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -88.0
-offset_top = -126.0
-offset_right = 88.0
-offset_bottom = -77.0
+offset_left = -109.5
+offset_top = -79.0
+offset_right = 109.5
+offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 0
 theme = ExtResource("2_ltcgh")
@@ -271,7 +273,7 @@ offset_right = 522.0
 offset_bottom = 407.5
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.3, 0.3)
+scale = Vector2(0.4, 0.4)
 pivot_offset = Vector2(522, 407)
 texture = ExtResource("3_u6427")
 

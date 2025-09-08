@@ -12,6 +12,8 @@ var players_in_match = 0
 var left_pin
 var right_pin
 
+signal game_over
+
 @onready var winner_left = $WinnerLeft
 @onready var winner_right = $WinnerRight
 
@@ -58,7 +60,7 @@ func _ball_start():
 	$Ball2.stopped = false
 
 	
-@rpc()
+@rpc("call_local")
 func _fill_name_and_pin(player_side, player_name, player_pin):
 	if player_side == 2:
 		right_pin = str(player_pin)
@@ -97,7 +99,7 @@ func del_player():
 	pass
 
 #Remember, the client is PART of the game. It may be easier, in your case, to usee a synchronizer of some kind. Or, you might have to adjust this RPC call. You should be using "call_remote"
-@rpc()
+@rpc("call_local")
 func update_score(add_to_left):
 	if add_to_left:
 		score_left+=1
@@ -116,7 +118,8 @@ func update_score(add_to_left):
 
 	if game_ended:
 		$ExitGame.show()
-		$Ball2.visible = false
+		game_over.emit()
+		
 		
 func _exit_tree():
 	if not multiplayer.is_server():
@@ -128,10 +131,13 @@ func _on_exit_game_pressed():
 	game_finished.emit()
 	
 
+	
+
 
 
 func _on_left_goal_area_entered(area: Area2D) -> void:
 	update_score.rpc(false)
+	
 
 
 func _on_right_goal_area_entered(area: Area2D) -> void:

@@ -112,6 +112,10 @@ horizontal_alignment = 2
 [node name="Ball2" parent="." instance=ExtResource("4_m5tya")]
 position = Vector2(320, 200)
 
+[node name="BallSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://bjmldn1x3lpa")
+spawn_path = NodePath("..")
+
 [node name="BallSync" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_m5tya")
 
