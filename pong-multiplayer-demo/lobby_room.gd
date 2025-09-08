@@ -27,11 +27,7 @@ signal create_new_matches
 
 
 func _ready():
-	print("We have now entered the lobby")
-	print("Player name: " + player_entry["username"] + " Player pin: " + player_entry["pin"])
 	$WaitingLabel.visible = true
-	print("Attempting to connect to Lambda server...")
-	
 	_connect_to_matchmaking_server()
 
 func _connect_to_matchmaking_server():
@@ -97,29 +93,17 @@ func _process_received_message(message):
 
 # I Think I have to fix this...
 func _add_matches_to_ui(matches):
-	#for match_index in range(matches.size()):
 	var next_match = matches[0]
-		
-		
-	#var button_text = matches[0].map
-		#var button_text = "Join a match!"
-		
-		#button
 	var match_button := Button.new()
-		#match_button.text = matches[match_index].map
 	match_button.text = "Join the next match!"
-		
-	
-		
+			
 	match_button.pressed.connect(self._join_match.bind(matches[0]))#If this is like the example video, clicking this is actually what triggers the game starting. 
 	available_matches.add_child(match_button)
 
 		
 		
 func _join_match(match: Dictionary):
-	print("join_match is running")#RIGHT NOW IT IS NOT BEING CALLED!
 	available_matches.hide()
-	#match_status.text = "Entering match lobby: \n " + match.teamMakeup + " | " + match.map
 	
 	var join_match_message = {
 		"op": JOIN_MATCH,
@@ -134,14 +118,10 @@ func _join_match(match: Dictionary):
 	_send_message(join_match_message)
 
 func _enter_match_lobby(match_with_players):
-	print("enter_match_lobby is running")	
-	
 	$MatchesContainer.hide()
-	#LobbyContainer.show()
 	matchmaking_status.hide()
-	#waiting_label.visible = true
 	
-	# this part is bad practice!! (I think he said "Server side should be doing this for you")
+	# this part is bad practice!! (I think he said "Server side should be doing this for you") LOOK INTO THIS MORE
 	var match_id = match_with_players.matchInfo.matchId
 	var check_match_ready = {
 		"op": CHECK_MATCH_READY,
@@ -180,5 +160,4 @@ func _create_mock_matches():
 	var messageToSend = {
 		"op": CREATE_MATCHES
 	}
-	print("create mock matches just ran")
 	_send_message(messageToSend)

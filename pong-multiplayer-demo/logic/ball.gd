@@ -3,10 +3,16 @@ extends Area2D
 const DEFAULT_SPEED = 100
 
 var direction = Vector2.LEFT
-var stopped = false
-var _speed = DEFAULT_SPEED
+@export var stopped = true
+@export var _speed = DEFAULT_SPEED
 
 @onready var _screen_size = get_viewport_rect().size
+
+func _ready():
+	if not multiplayer.is_server():
+		set_process(false)
+		set_physics_process(false)
+	
 
 func _process(delta):
 	_speed += delta
@@ -22,26 +28,26 @@ func _process(delta):
 		direction.y = -direction.y
 
 	#if is_multiplayer_authority():
-		## Only the master will decide when the ball is out in
-		## the left side (it's own side). This makes the game
-		## playable even if latency is high and ball is going
-		## fast. Otherwise ball might be out in the other
-		## player's screen but not this one.
-		##if ball_pos.x < 0:
-			##get_parent().update_score.rpc(false)
-			##_reset_ball.rpc(false)
-	#else:
-		## Only the puppet will decide when the ball is out in
-		## the right side, which is it's own side. This makes
-		## the game playable even if latency is high and ball
-		## is going fast. Otherwise ball might be out in the
-		## other player's screen but not this one.
-		##if ball_pos.x > _screen_size.x:
-			##get_parent().update_score.rpc(true)
-			##_reset_ball.rpc(true)
+		### Only the master will decide when the ball is out in
+		### the left side (it's own side). This makes the game
+		### playable even if latency is high and ball is going
+		### fast. Otherwise ball might be out in the other
+		### player's screen but not this one.
+	if ball_pos.x < 0:
+		_reset_ball(false)
+		#get_parent().update_score(false)
+	##else:
+		### Only the puppet will decide when the ball is out in
+		### the right side, which is it's own side. This makes
+		### the game playable even if latency is high and ball
+		### is going fast. Otherwise ball might be out in the
+		### other player's screen but not this one.
+	if ball_pos.x > _screen_size.x:
+		_reset_ball(true)
+		#get_parent().update_score(true)
 
 
-@rpc("any_peer", "call_local")
+
 func bounce(left, random):
 	# Using sync because both players can make it bounce.
 	if left:
@@ -54,12 +60,12 @@ func bounce(left, random):
 	direction = direction.normalized()
 
 
-@rpc("any_peer", "call_local")
+
 func stop():
 	stopped = true
 
 
-@rpc("any_peer", "call_local")
+
 func _reset_ball(for_left):
 	position = _screen_size / 2
 	if for_left:

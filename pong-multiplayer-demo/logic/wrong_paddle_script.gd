@@ -12,7 +12,7 @@ func _init():
 
 
 func _process(delta):
-	if is_multiplayer_authority():
+	if multiplay():
 		var dir = Input.get_axis(&"move_up", &"move_down")
 		_send_input.rpc_id(1, dir) # always send to server (ID 1)
 

@@ -36,7 +36,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_c0dwi")
 theme_override_font_sizes/font_size = 72
-text = "Pin Pong"
+text = "PIN Pong"
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 1

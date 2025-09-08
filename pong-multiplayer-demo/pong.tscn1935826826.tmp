@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bafoh1ief0147"]
+[gd_scene load_steps=6 format=3 uid="uid://bafoh1ief0147"]
 
 [ext_resource type="Script" uid="uid://b77yj8ux8kbs3" path="res://logic/pong.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://b10swafhe08oj" path="res://separator.png" id="2"]
@@ -9,12 +9,6 @@
 properties/0/path = NodePath("Ball2:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_m5tya"]
-size = Vector2(20, 413)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_eipaa"]
-size = Vector2(20, 401)
 
 [node name="Pong" type="Node2D"]
 script = ExtResource("1")
@@ -32,13 +26,12 @@ texture = ExtResource("2")
 
 [node name="WinnerLeft" type="Label" parent="."]
 visible = false
-offset_left = 97.0
+offset_left = 190.0
 offset_top = 170.0
-offset_right = 273.0
-offset_bottom = 186.0
+offset_right = 267.0
+offset_bottom = 184.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
-theme = ExtResource("4_eipaa")
 text = "The Winner!"
 
 [node name="WinnerRight" type="Label" parent="."]
@@ -49,7 +42,6 @@ offset_right = 457.0
 offset_bottom = 184.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
-theme = ExtResource("4_eipaa")
 text = "The Winner!"
 
 [node name="ExitGame" type="Button" parent="."]
@@ -66,6 +58,8 @@ text = "Exit Game"
 offset = Vector2(320, 200)
 
 [node name="Players" type="Node" parent="."]
+
+[node name="Ball" type="Node" parent="."]
 
 [node name="Pin1" type="Label" parent="."]
 texture_filter = 1
@@ -92,7 +86,6 @@ text = "XXXX"
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://cpw46256eirwq")
 spawn_path = NodePath("../Players")
-spawn_limit = 2
 
 [node name="Name1" type="Label" parent="."]
 offset_left = 4.0
@@ -112,19 +105,7 @@ horizontal_alignment = 2
 [node name="Ball2" parent="." instance=ExtResource("4_m5tya")]
 position = Vector2(320, 200)
 
-[node name="BallSync" type="MultiplayerSynchronizer" parent="."]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_m5tya")
 
-[node name="LeftGoal" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftGoal"]
-position = Vector2(-9, 196.5)
-shape = SubResource("RectangleShape2D_m5tya")
-
-[node name="RightGoal" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RightGoal"]
-position = Vector2(647, 200.5)
-shape = SubResource("RectangleShape2D_eipaa")
-
-[connection signal="body_entered" from="Ball2" to="." method="_on_ball_2_body_entered"]
+[connection signal="pressed" from="ExitGame" to="." method="_on_exit_game_pressed"]

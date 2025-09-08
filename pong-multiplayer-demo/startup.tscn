@@ -239,7 +239,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_ltcgh")
 theme_override_font_sizes/font_size = 72
-text = "Pin Pong"
+text = "PIN Pong"
 
 [node name="StartButton" type="Button" parent="GameTitle"]
 layout_mode = 1

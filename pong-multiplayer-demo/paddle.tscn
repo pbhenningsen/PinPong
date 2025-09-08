@@ -8,11 +8,11 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tbytw"]
 size = Vector2(8, 32)
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_tbytw"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_2bcmx"]
 properties/0/path = NodePath(".:player")
 properties/0/spawn = true
 properties/0/replication_mode = 0
-properties/1/path = NodePath("You:text")
+properties/1/path = NodePath(".:position")
 properties/1/spawn = true
 properties/1/replication_mode = 1
 
@@ -42,12 +42,10 @@ theme = ExtResource("3_2bcmx")
 text = "You"
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_tbytw")
+replication_config = SubResource("SceneReplicationConfig_2bcmx")
 
 [node name="PlayerInput" type="Node" parent="."]
 script = ExtResource("3_r112f")
 
 [node name="InputSync" type="MultiplayerSynchronizer" parent="PlayerInput"]
 replication_config = SubResource("SceneReplicationConfig_r112f")
-
-[connection signal="area_entered" from="." to="." method="_on_paddle_area_enter"]
