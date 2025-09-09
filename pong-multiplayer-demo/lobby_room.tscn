@@ -52,6 +52,7 @@ offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "Waiting for opponent..."
+autowrap_mode = 2
 
 [node name="MatchesContainer" type="Panel" parent="."]
 visible = false
@@ -95,7 +96,13 @@ offset_bottom = 30.0
 theme_override_font_sizes/font_size = 5
 text = "Create Matches"
 
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+autostart = true
+
 [connection signal="connected_to_server" from="WebSocketClient" to="." method="_on_websocket_client_connected_to_server"]
 [connection signal="connection_closed" from="WebSocketClient" to="." method="_on_websocket_client_connection_close"]
 [connection signal="message_received" from="WebSocketClient" to="." method="_on_websocket_message_received"]
 [connection signal="pressed" from="CreateMockMatches" to="." method="_create_mock_matches"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

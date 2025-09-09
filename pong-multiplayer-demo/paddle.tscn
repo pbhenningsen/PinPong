@@ -5,13 +5,10 @@
 [ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="3_2bcmx"]
 [ext_resource type="Script" uid="uid://b6addjqd7w5yt" path="res://input.gd" id="3_r112f"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_tbytw"]
-size = Vector2(8, 32)
-
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_2bcmx"]
 properties/0/path = NodePath(".:player")
 properties/0/spawn = true
-properties/0/replication_mode = 0
+properties/0/replication_mode = 1
 properties/1/path = NodePath(".:position")
 properties/1/spawn = true
 properties/1/replication_mode = 1
@@ -21,8 +18,20 @@ properties/0/path = NodePath(".:input_motion")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tbytw"]
+size = Vector2(8, 32)
+
 [node name="Paddle" type="Area2D"]
 script = ExtResource("1_tbytw")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_2bcmx")
+
+[node name="PlayerInput" type="Node" parent="."]
+script = ExtResource("3_r112f")
+
+[node name="InputSync" type="MultiplayerSynchronizer" parent="PlayerInput"]
+replication_config = SubResource("SceneReplicationConfig_r112f")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_tbytw")
@@ -40,12 +49,3 @@ size_flags_horizontal = 2
 size_flags_vertical = 0
 theme = ExtResource("3_2bcmx")
 text = "You"
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_2bcmx")
-
-[node name="PlayerInput" type="Node" parent="."]
-script = ExtResource("3_r112f")
-
-[node name="InputSync" type="MultiplayerSynchronizer" parent="PlayerInput"]
-replication_config = SubResource("SceneReplicationConfig_r112f")

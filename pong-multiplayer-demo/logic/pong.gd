@@ -19,11 +19,15 @@ signal game_over
 
 func _ready():
 	if not multiplayer.is_server():
+		$Label.hide()
 		return
 	multiplayer.peer_connected.connect(_on_player_connected) ##This represents clients connecting to the server. 
 	multiplayer.peer_disconnected.connect(del_player)
 	$LeftGoal.area_entered.connect(_on_left_goal_area_entered)
 	$RightGoal.area_entered.connect(_on_right_goal_area_entered)
+	$LowerBoundary.area_entered.connect(_on_lower_boundary_area_entered)
+	$UpperBoundary.area_entered.connect(_on_upper_boundary_area_entered)
+	
 	
 func _on_player_connected(id: int):
 	if multiplayer.is_server():
@@ -46,21 +50,20 @@ func add_player(id):
 	paddle.name = str(id)
 	
 	if players_in_match == 1:
-		paddle.position = Vector2(32, 180)
+		paddle.position = Vector2(32, 200)
 		paddle.left = true
 	elif players_in_match == 2:
-		paddle.position = Vector2(600, 180)
+		paddle.position = Vector2(600, 200)
 		_ball_start()
 
 	$Players.add_child(paddle, true)
 	
 func _ball_start():
-	print("_ball_start_running")
 	await get_tree().create_timer(1.0).timeout
 	$Ball2.stopped = false
 
 	
-@rpc("call_local")
+@rpc("call_local", "reliable") #WAS CALL_LOCAL
 func _fill_name_and_pin(player_side, player_name, player_pin):
 	if player_side == 2:
 		right_pin = str(player_pin)
@@ -71,7 +74,7 @@ func _fill_name_and_pin(player_side, player_name, player_pin):
 		$Pin1.set_text("XXXX")
 		$Name1.set_text(player_name)
 	
-	
+@rpc("call_local", "reliable")
 func _reveal_pin(player_side, score):
 	if player_side == "right":
 		match score:
@@ -95,31 +98,38 @@ func _reveal_pin(player_side, score):
 				$Pin2.text= right_pin
 	
 
-func del_player():
-	pass
+func del_player(id):
+	pass#set match to endedwhat
 
-#Remember, the client is PART of the game. It may be easier, in your case, to usee a synchronizer of some kind. Or, you might have to adjust this RPC call. You should be using "call_remote"
-@rpc("call_local")
+
 func update_score(add_to_left):
 	if add_to_left:
 		score_left+=1
-		_reveal_pin("left", score_left)
+		_reveal_pin.rpc("left", score_left)
 	else:
 		score_right += 1
-		_reveal_pin("right", score_right)
+		_reveal_pin.rpc("right", score_right)
 
 	var game_ended = false
 	if score_left == SCORE_TO_WIN:
-		winner_left.show()
+		_show_winner.rpc("left")
 		game_ended = true
 	elif score_right == SCORE_TO_WIN:
-		winner_right.show()
+		_show_winner.rpc("right")
 		game_ended = true
 
 	if game_ended:
-		$ExitGame.show()
+		#$ExitGame.show()
 		game_over.emit()
-		
+
+
+@rpc()
+func _show_winner(side):
+	if side == "left":
+		winner_left.show()
+	else:
+		winner_right.show()
+	
 		
 func _exit_tree():
 	if not multiplayer.is_server():
@@ -131,14 +141,24 @@ func _on_exit_game_pressed():
 	game_finished.emit()
 	
 
-	
-
-
-
 func _on_left_goal_area_entered(area: Area2D) -> void:
-	update_score.rpc(false)
+	area._reset_ball(false)
+	update_score(false)
 	
 
 
 func _on_right_goal_area_entered(area: Area2D) -> void:
-	update_score.rpc(true)
+	area._reset_ball(true)
+	update_score(true)
+
+
+func _on_lower_boundary_area_entered(area: Area2D) -> void:
+	if area.get_parent() == $Players:
+		return
+	area.direction.y = -area.direction.y
+
+
+func _on_upper_boundary_area_entered(area: Area2D) -> void:
+	if area.get_parent() == $Players:
+		return
+	area.direction.y = - area.direction.y

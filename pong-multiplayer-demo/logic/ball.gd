@@ -6,7 +6,8 @@ var direction = Vector2.LEFT
 @export var stopped = true
 @export var _speed = DEFAULT_SPEED
 
-@onready var _screen_size = get_viewport_rect().size
+@onready var _screen_size_x = 640
+@onready var _screen_size_y = 400
 @onready var pong: Node2D = $".."
 
 
@@ -27,30 +28,30 @@ func _process(delta):
 	if not stopped:
 		translate(_speed * delta * direction)
 
-	# Check screen bounds to make ball bounce.
-	var ball_pos = position
-	if (ball_pos.y < 0 and direction.y < 0) or (ball_pos.y > _screen_size.y and direction.y > 0):
-		direction.y = -direction.y
-
-	#if is_multiplayer_authority():
-		### Only the master will decide when the ball is out in
-		### the left side (it's own side). This makes the game
-		### playable even if latency is high and ball is going
-		### fast. Otherwise ball might be out in the other
-		### player's screen but not this one.
-	if ball_pos.x < 0:
-		_reset_ball(false)
-		#get_parent().update_score(false)
-	##else:
-		### Only the puppet will decide when the ball is out in
-		### the right side, which is it's own side. This makes
-		### the game playable even if latency is high and ball
-		### is going fast. Otherwise ball might be out in the
-		### other player's screen but not this one.
-	if ball_pos.x > _screen_size.x:
-		_reset_ball(true)
-		#get_parent().update_score(true)
-
+	# Check screen bounds to make ball bounce. HANDLE THIS WITH SIGNALS TOO. THAT WAY, YOU'RE TAKING STRAIN OFF THE BALL. 
+	#var ball_pos = position
+	#if (ball_pos.y < 0 and direction.y < 0) or (ball_pos.y > _screen_size.y and direction.y > 0):
+		#direction.y = -direction.y 
+#
+	##if is_multiplayer_authority():
+		#### Only the master will decide when the ball is out in
+		#### the left side (it's own side). This makes the game
+		#### playable even if latency is high and ball is going
+		#### fast. Otherwise ball might be out in the other
+		##### player's screen but not this one.
+	#if ball_pos.x < 0:
+		#_reset_ball(false)
+		###get_parent().update_score(false)
+	####else:
+		##### Only the puppet will decide when the ball is out in
+		##### the right side, which is it's own side. This makes
+		##### the game playable even if latency is high and ball
+		##### is going fast. Otherwise ball might be out in the
+		##### other player's screen but not this one.
+	#if ball_pos.x > _screen_size.x:
+		#_reset_ball(true)
+		###get_parent().update_score(true)
+##
 
 
 func bounce(left, random):
@@ -68,14 +69,16 @@ func bounce(left, random):
 
 func stop():
 	stopped = true
+	visible  = false
 
 
 func _kill_that_ball():
 	print("Ass")
-	queue_free()
+	stopped = true
 
 func _reset_ball(for_left):
-	position = _screen_size / 2
+	#position = _screen_size / 2
+	position = Vector2(_screen_size_x/2, _screen_size_y/2)
 	if for_left:
 		direction = Vector2.LEFT
 	else:

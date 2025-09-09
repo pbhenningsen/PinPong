@@ -11,6 +11,7 @@ var websocket_url = "wss://w0jm78oqx6.execute-api.us-east-2.amazonaws.com/produc
 
 var player_entry = {}#THIS IS THE PLAYER ENTRY THAT I'M TRYING TO ADJUST
 var matches_remaining
+var match_ready = false
 
 #OP CODES
 const REQUEST_MATCHES = "REQUEST_MATCHES" #SERVER(LAMBDA): Retreives matches from DB, returns matches
@@ -21,6 +22,7 @@ const PLAYER_DROPPED = "PLAYER_DROPPED"
 const CHECK_MATCH_READY = "CHECK_MATCH_READY" #SERVER(LAMBDA): Checks if match is full
 const MATCH_READY = "MATCH_READY" #SERVER(LAMBDA): Once the match is ready, it will send this back along with the IP address and Port # of the actual Godot server that's hosting the game. 
 const CREATE_MATCHES = "CREATE_MATCHES"
+const NONE = "NONE"
 
 signal start_client(ip, port)
 signal create_new_matches
@@ -68,6 +70,7 @@ func _process_received_message(message):
 			elif response_msg.op == MATCH_READY:
 				print("MATCH_READY")
 				print("Connection info: %s, %s" % [response_msg.response.ip, response_msg.response.port])
+				match_ready = true
 				
 				
 				matchmaking_status.text = "[center]Game Full, Entering Match![center]"
@@ -79,6 +82,7 @@ func _process_received_message(message):
 			elif response_msg.op == PLAYER_JOINED:
 				print("PLAYER_JOINED")
 				var match_with_players = response_msg.response # MAYBE ADD ANOTHER MATCH HERE IF IT'S EMPTY
+	
 				#_build_player_lobby_lists(match_with_players.users)
 				#print("Player 1 team" + response_msg.response.users[0].team)#I'VE GOT THE TEAM NUMBERS, NOW HOW CAN I USE THEM?
 				#print("Player 2 team" + response_msg.response.users[1].team)
@@ -89,6 +93,8 @@ func _process_received_message(message):
 				print("Dropped player: %s " % match_with_players.userId)
 				#_build_player_lobby_lists(match_with_players.users)
 				
+
+
 
 
 # I Think I have to fix this...
@@ -161,3 +167,10 @@ func _create_mock_matches():
 		"op": CREATE_MATCHES
 	}
 	_send_message(messageToSend)
+
+
+func _on_timer_timeout() -> void:
+	if match_ready == true:
+		waiting_label.text = "It would appear that our server has experienced an error.\n\n Please hit refresh on your browser and try again."
+		
+	waiting_label.text = "No one else is playing PIN Pong at the moment. Tell a friend! \n\nIf anyone decides to join, the game will still load from this screen."

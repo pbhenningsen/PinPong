@@ -1,7 +1,8 @@
 extends Node
 
 const SERVER_PORT = 8080
-const SERVER_IP = "127.0.0.1" # change this to your IP if you're using a remote server
+const SERVER_IP = "ec2-3-131-137-106.us-east-2.compute.amazonaws.com" # change this to your IP if you're using a remote server
+
 
 const gameplay_level = "res://pong.tscn"
 const lobby_room = "res://lobby_room.tscn"
@@ -22,6 +23,8 @@ signal both_players_registered
 
 
 func _ready(): 
+	#if OS.has_feature("dedicated_server"): I'M TAKING THIS OUT FOR THE WEB EXPORT
+		#_become_host()
 	$GameTitle/Logo.hide()
 
 func _on_start_game_pressed() -> void:
@@ -29,13 +32,11 @@ func _on_start_game_pressed() -> void:
 	$GameTitle/StartButton.hide()
 	$GameTitle/Logo.show()
 	$GameTitle/AnimationPlayer.play("logo_fade_in")
-	#await get_tree().create_timer(2.0)
-	#$GameTitle/Logo.visible = false
 	multiplayer.connected_to_server.connect(_send_player_data)
-	if OS.has_feature("dedicated_server"):
-		# if this is a dedicated server, run as a server
-		_on_host_pressed()
-	await get_tree().create_timer(2.5).timeout
+	#if OS.has_feature("dedicated_server"):
+		## if this is a dedicated server, run as a server
+		#_on_host_pressed()
+	await get_tree().create_timer(3.0).timeout
 	$GameTitle.hide()
 
 
@@ -56,11 +57,12 @@ func register_player(player_id, player_name, player_pin):
 	
 	
 
-func _on_host_pressed():
+func _become_host():
 	var peer = ENetMultiplayerPeer.new()
 	peer.create_server(SERVER_PORT)
 	multiplayer.multiplayer_peer = peer
 	start_game()
+	
 
 func start_game():
 	$UI.hide()
@@ -75,14 +77,19 @@ func change_level(scene: PackedScene):
 		c.queue_free()
 	level.add_child(scene.instantiate())
 	
-
-func _on_client_pressed(ip = SERVER_IP, port = SERVER_PORT):
-	var peer = ENetMultiplayerPeer.new()
-	peer.create_client(SERVER_IP, SERVER_PORT)
-	multiplayer.multiplayer_peer = peer
-	start_game()
 #
+#func _on_client_pressed(ip = SERVER_IP, port = SERVER_PORT):
+	#var peer = ENetMultiplayerPeer.new()
+	#peer.create_client(SERVER_IP, SERVER_PORT)
+	#multiplayer.multiplayer_peer = peer
+	#start_game()
+##
 func _on_find_match_pressed():
+	if !(player_pin.text.is_valid_int() && player_pin.text.length() == 4):
+		$UI/ValidPIN.show()
+		await get_tree().create_timer(1.0).timeout
+		$UI/ValidPIN.hide()
+		return
 	$UI.hide()
 	var player_id = str(randi() % 1000)
 	var player_entry = {
@@ -102,7 +109,10 @@ func _on_find_match_pressed():
 	lobby_placeholder.add_child(lobby)
 
 func start_client(ip = SERVER_IP, port = SERVER_PORT):
-	_on_client_pressed(ip,port)
+	var peer = ENetMultiplayerPeer.new()
+	peer.create_client(SERVER_IP, SERVER_PORT)
+	multiplayer.multiplayer_peer = peer
+	start_game()
 	lobby_placeholder.get_child(0).hide()
 
 

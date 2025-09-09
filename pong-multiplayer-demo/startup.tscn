@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dk4wrmcmcif7s"]
+[gd_scene load_steps=9 format=3 uid="uid://dk4wrmcmcif7s"]
 
 [ext_resource type="Script" uid="uid://ccangntjuqeuf" path="res://startup.gd" id="1_c4aps"]
 [ext_resource type="Theme" uid="uid://c60exinomkert" path="res://PINPongMainTheme.tres" id="2_ltcgh"]
@@ -6,6 +6,9 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltcgh"]
 bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u6427"]
+bg_color = Color(1, 1, 1, 1)
 
 [sub_resource type="Animation" id="Animation_g014h"]
 length = 0.001
@@ -134,7 +137,7 @@ offset_right = 426.0
 offset_bottom = 122.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
-text = "Please enter your ATM pin:"
+text = "Please enter your ATM PIN:"
 
 [node name="Pin" type="LineEdit" parent="UI/StartupPanel"]
 layout_mode = 0
@@ -144,7 +147,6 @@ offset_right = 367.0
 offset_bottom = 163.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
-placeholder_text = "XXXX"
 
 [node name="StatusOk" type="Label" parent="UI/StartupPanel"]
 layout_mode = 1
@@ -188,7 +190,6 @@ offset_bottom = -19.0
 grow_horizontal = 2
 grow_vertical = 0
 text = "Find Match!"
-metadata/_edit_group_ = true
 
 [node name="Host" type="Button" parent="UI"]
 layout_mode = 1
@@ -202,12 +203,53 @@ text = "HOST
 "
 
 [node name="Client" type="Button" parent="UI"]
+visible = false
 layout_mode = 0
 offset_left = 519.0
 offset_top = 360.0
 offset_right = 623.0
 offset_bottom = 384.0
 text = "Client"
+
+[node name="ValidPIN" type="Label" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -192.0
+offset_top = -33.0
+offset_right = 192.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_ltcgh")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_u6427")
+text = "Please Enter A Valid PIN!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Label" type="Label" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -95.0
+offset_top = -55.5
+offset_right = 95.0
+offset_bottom = 55.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_ltcgh")
+text = "We are sorry, but our servers seem to be having a problem. Please reload the game in a new tab on your browser. "
+autowrap_mode = 1
 
 [node name="GameTitle" type="Control" parent="."]
 layout_mode = 3
@@ -216,6 +258,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_lock_ = true
 
 [node name="ColorRect" type="ColorRect" parent="GameTitle"]
 layout_mode = 1
@@ -225,6 +268,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
 
 [node name="TitleLabel" type="Label" parent="GameTitle"]
 layout_mode = 1
@@ -276,6 +320,7 @@ grow_vertical = 2
 scale = Vector2(0.4, 0.4)
 pivot_offset = Vector2(522, 407)
 texture = ExtResource("3_u6427")
+metadata/_edit_lock_ = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="GameTitle"]
 libraries = {
@@ -285,6 +330,6 @@ libraries = {
 [node name="LobbyPlaceholder" type="Node" parent="."]
 
 [connection signal="pressed" from="UI/FindMatch" to="." method="_on_find_match_pressed"]
-[connection signal="pressed" from="UI/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="UI/Host" to="." method="_become_host"]
 [connection signal="pressed" from="UI/Client" to="." method="_on_client_pressed"]
 [connection signal="pressed" from="GameTitle/StartButton" to="." method="_on_start_game_pressed"]

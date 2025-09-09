@@ -13,7 +13,7 @@ const MOTION_SPEED = 150
 @export var _motion = 0#represents its speed
 @export var _pos: Vector2
 
-@onready var _screen_size_y = get_viewport_rect().size.y
+@onready var _screen_size_y = 400
 
 signal set_name_and_pin(paddle_side, player_name, player_pin)
 
@@ -33,7 +33,7 @@ func _apply_input(delta: float):
 	_motion = player_input.input_motion *MOTION_SPEED
 	translate(Vector2(0, _motion * delta))
 	# Set screen limits.
-	position.y = clamp(position.y, 16, _screen_size_y - 16)
+	position.y = clamp(position.y, 17, _screen_size_y - 17)
 	
 
 func _set_label_text():
@@ -52,5 +52,6 @@ func set_player_name(value):
 
 func _on_paddle_area_enter(area):
 	if multiplayer.is_server():
+	
 		## Random for new direction generated checked each peer.
-		area.bounce(left, randf())#As you can see, the clients are allowed to call the bounce RPC. 
+			area.bounce(left, randf())#As you can see, the clients are allowed to call the bounce RPC. 
