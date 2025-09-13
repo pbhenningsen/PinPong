@@ -28,6 +28,7 @@ signal start_client(ip, port)
 signal create_new_matches
 
 
+
 func _ready():
 	$WaitingLabel.visible = true
 	_connect_to_matchmaking_server()

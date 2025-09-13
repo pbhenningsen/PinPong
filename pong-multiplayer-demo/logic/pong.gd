@@ -12,14 +12,17 @@ var players_in_match = 0
 var left_pin
 var right_pin
 
+
 signal game_over
 
 @onready var winner_left = $WinnerLeft
 @onready var winner_right = $WinnerRight
 
+
 func _ready():
+	
 	if not multiplayer.is_server():
-		$Label.hide()
+		#$Label.hide()
 		return
 	multiplayer.peer_connected.connect(_on_player_connected) ##This represents clients connecting to the server. 
 	multiplayer.peer_disconnected.connect(del_player)
@@ -27,6 +30,7 @@ func _ready():
 	$RightGoal.area_entered.connect(_on_right_goal_area_entered)
 	$LowerBoundary.area_entered.connect(_on_lower_boundary_area_entered)
 	$UpperBoundary.area_entered.connect(_on_upper_boundary_area_entered)
+
 	
 	
 func _on_player_connected(id: int):
@@ -99,7 +103,9 @@ func _reveal_pin(player_side, score):
 	
 
 func del_player(id):
-	pass#set match to endedwhat
+	if not $Players.has_node(str(id)):
+		return
+	$Players.get_node(str(id)).queue_free()
 
 
 func update_score(add_to_left):
@@ -119,7 +125,7 @@ func update_score(add_to_left):
 		game_ended = true
 
 	if game_ended:
-		#$ExitGame.show()
+		#I'm going to set a timer here so that there's a little bit of time to capture the image before it resets to a new game. 
 		game_over.emit()
 
 
@@ -127,10 +133,15 @@ func update_score(add_to_left):
 func _show_winner(side):
 	if side == "left":
 		winner_left.show()
+		$ExitGame.show()
 	else:
 		winner_right.show()
+		$ExitGame.show()
 	
-		
+
+	
+
+
 func _exit_tree():
 	if not multiplayer.is_server():
 		return
@@ -138,7 +149,11 @@ func _exit_tree():
 	multiplayer.peer_disconnected.disconnect(del_player)
 
 func _on_exit_game_pressed():
-	game_finished.emit()
+	if multiplayer.multiplayer_peer:
+		multiplayer.multiplayer_peer.close()
+		multiplayer.multiplayer_peer = null
+		Globals.player_entry.clear()
+		
 	
 
 func _on_left_goal_area_entered(area: Area2D) -> void:

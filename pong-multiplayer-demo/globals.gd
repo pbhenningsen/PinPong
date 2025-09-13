@@ -8,3 +8,4 @@ var player_entry = {
 var connected_players = {}
 
 signal _both_players_registered
+signal new_match()

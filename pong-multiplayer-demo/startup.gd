@@ -1,7 +1,9 @@
 extends Node
 
 const SERVER_PORT = 8080
-const SERVER_IP = "ec2-3-131-137-106.us-east-2.compute.amazonaws.com" # change this to your IP if you're using a remote server
+#const SERVER_IP = "ec2-3-131-137-106.us-east-2.compute.amazonaws.com" # change this to your IP if you're using a remote server
+const SERVER_IP = "127.0.0.1" # change this to your IP if you're using a remote server
+
 
 
 const gameplay_level = "res://pong.tscn"
@@ -23,9 +25,10 @@ signal both_players_registered
 
 
 func _ready(): 
-	#if OS.has_feature("dedicated_server"): I'M TAKING THIS OUT FOR THE WEB EXPORT
-		#_become_host()
+	if OS.has_feature("dedicated_server"):
+		_become_host()
 	$GameTitle/Logo.hide()
+	Globals.new_match.connect(_new_match_pressed)
 
 func _on_start_game_pressed() -> void:
 	$GameTitle/TitleLabel.hide()
@@ -33,9 +36,9 @@ func _on_start_game_pressed() -> void:
 	$GameTitle/Logo.show()
 	$GameTitle/AnimationPlayer.play("logo_fade_in")
 	multiplayer.connected_to_server.connect(_send_player_data)
-	#if OS.has_feature("dedicated_server"):
-		## if this is a dedicated server, run as a server
-		#_on_host_pressed()
+	if OS.has_feature("dedicated_server"):
+		# if this is a dedicated server, run as a server
+		_become_host()
 	await get_tree().create_timer(3.0).timeout
 	$GameTitle.hide()
 
@@ -84,6 +87,22 @@ func change_level(scene: PackedScene):
 	#multiplayer.multiplayer_peer = peer
 	#start_game()
 ##
+
+#I THINK THIS NEEDS TO BE AN RPC?
+func _new_match_pressed():
+	if multiplayer.is_server():
+		_clear_game.rpc()
+	
+	
+	
+@rpc("call_local")
+func _clear_game():
+	print("clear game called")
+	$Level.get_child(0).queue_free()	
+	$LobbyPlaceholder.get_child(0).queue_free()
+
+	
+
 func _on_find_match_pressed():
 	if !(player_pin.text.is_valid_int() && player_pin.text.length() == 4):
 		$UI/ValidPIN.show()
@@ -114,6 +133,3 @@ func start_client(ip = SERVER_IP, port = SERVER_PORT):
 	multiplayer.multiplayer_peer = peer
 	start_game()
 	lobby_placeholder.get_child(0).hide()
-
-
-	
