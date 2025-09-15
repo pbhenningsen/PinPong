@@ -1,8 +1,8 @@
 extends Node
 
 const SERVER_PORT = 8080
-#const SERVER_IP = "ec2-3-131-137-106.us-east-2.compute.amazonaws.com" # change this to your IP if you're using a remote server
-const SERVER_IP = "127.0.0.1" # change this to your IP if you're using a remote server
+const SERVER_IP = "ec2-3-131-137-106.us-east-2.compute.amazonaws.com" # change this to your IP if you're using a remote server
+#const SERVER_IP = "127.0.0.1" # change this to your IP if you're using a remote server
 
 
 
@@ -25,8 +25,8 @@ signal both_players_registered
 
 
 func _ready(): 
-	if OS.has_feature("dedicated_server"):
-		_become_host()
+	#if OS.has_feature("dedicated_server"):
+		#_become_host()
 	$GameTitle/Logo.hide()
 	Globals.new_match.connect(_new_match_pressed)
 
@@ -36,9 +36,9 @@ func _on_start_game_pressed() -> void:
 	$GameTitle/Logo.show()
 	$GameTitle/AnimationPlayer.play("logo_fade_in")
 	multiplayer.connected_to_server.connect(_send_player_data)
-	if OS.has_feature("dedicated_server"):
-		# if this is a dedicated server, run as a server
-		_become_host()
+	#if OS.has_feature("dedicated_server"):
+		## if this is a dedicated server, run as a server
+		#_become_host()
 	await get_tree().create_timer(3.0).timeout
 	$GameTitle.hide()
 

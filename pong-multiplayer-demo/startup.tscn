@@ -192,6 +192,7 @@ grow_vertical = 0
 text = "Find Match!"
 
 [node name="Host" type="Button" parent="UI"]
+visible = false
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0

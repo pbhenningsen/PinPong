@@ -133,10 +133,10 @@ func update_score(add_to_left):
 func _show_winner(side):
 	if side == "left":
 		winner_left.show()
-		$ExitGame.show()
+		#$ExitGame.show()
 	else:
 		winner_right.show()
-		$ExitGame.show()
+		#$ExitGame.show()
 	
 
 	
@@ -148,11 +148,11 @@ func _exit_tree():
 	multiplayer.peer_connected.disconnect(add_player)
 	multiplayer.peer_disconnected.disconnect(del_player)
 
-func _on_exit_game_pressed():
-	if multiplayer.multiplayer_peer:
-		multiplayer.multiplayer_peer.close()
-		multiplayer.multiplayer_peer = null
-		Globals.player_entry.clear()
+#func _on_exit_game_pressed():
+	#if multiplayer.multiplayer_peer:
+		#multiplayer.multiplayer_peer.close()
+		#multiplayer.multiplayer_peer = null
+		#Globals.player_entry.clear()
 		
 	
 
